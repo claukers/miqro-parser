@@ -5,7 +5,12 @@ import {ParseOptionsBase} from "./common";
 usage const name = get(obj, "user.info.name", defaultValue, {type: "string"}, parser);
 */
 /* eslint-disable  @typescript-eslint/explicit-module-boundary-types */
-export const get = (obj: any, attrPath: string, defaultValue?: any, option?: ParseOptionsBase, parser?: Parser): any | undefined => {
+export const get = (obj: any, attrPath: string, defaultValue?: any, option?: ParseOptionsBase | string, parser?: Parser): any | undefined => {
+  if (typeof option === "string") {
+    option = {
+      type: option
+    };
+  }
   if (defaultValue && option && option.defaultValue) {
     throw new Error(`cannot send defaultValue and options.defaultValue`);
   }

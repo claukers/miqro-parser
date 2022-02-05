@@ -6,7 +6,7 @@ it('parse no_extra test', async () => {
 
   try {
 
-    parse("argName", {
+    parse( {
       bla: 1,
       blaasd: "1"
     }, [
@@ -14,14 +14,14 @@ it('parse no_extra test', async () => {
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.blaasd option not valid [blaasd]");
+    strictEqual((e).message, "arg.blaasd option not valid [blaasd]");
   }
 
 });
 
 it('parse no_extra test any with number', async () => {
 
-  const { bla } = parse("argName", {
+  const { bla } = parse( {
     bla: 123
   }, [
     { name: "bla", type: "any", required: true },
@@ -32,33 +32,33 @@ it('parse no_extra test any with number', async () => {
 
 it('parse minDecimal', async () => {
 
-  const ret = parse("argName", {
+  const ret = parse( {
     bla: "1.2"
   }, [
     { name: "bla", type: "number", numberMinDecimals: 1 },
   ], "no_extra");
   strictEqual(ret.bla, 1.2);
   try {
-    parse("argName", {
+    parse( {
       bla: "1"
     }, [
       { name: "bla", type: "number", numberMinDecimals: 1 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not number min decimals[1]");
+    strictEqual((e).message, "arg.bla not number min decimals[1]");
   }
   try {
-    parse("argName", {
+    parse( {
       bla: "1.223"
     }, [
       { name: "bla", type: "number", numberMinDecimals: 4 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not number min decimals[4]");
+    strictEqual((e).message, "arg.bla not number min decimals[4]");
   }
-  const ret2 = parse("argName", {
+  const ret2 = parse( {
     bla: "1231231.2234"
   }, [
     { name: "bla", type: "number", numberMinDecimals: 4 },
@@ -69,33 +69,33 @@ it('parse minDecimal', async () => {
 
 it('parse maxDecimal', async () => {
 
-  const ret = parse("argName", {
+  const ret = parse( {
     bla: "1.2"
   }, [
     { name: "bla", type: "number", numberMaxDecimals: 1 },
   ], "no_extra");
   strictEqual(ret.bla, 1.2);
   try {
-    parse("argName", {
+    parse( {
       bla: "1.23"
     }, [
       { name: "bla", type: "number", numberMaxDecimals: 1 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not number max decimals[1]");
+    strictEqual((e).message, "arg.bla not number max decimals[1]");
   }
   try {
-    parse("argName", {
+    parse( {
       bla: "1231.223"
     }, [
       { name: "bla", type: "number", numberMaxDecimals: 2 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not number max decimals[2]");
+    strictEqual((e).message, "arg.bla not number max decimals[2]");
   }
-  const ret2 = parse("argName", {
+  const ret2 = parse( {
     bla: "1231231.2234"
   }, [
     { name: "bla", type: "number", numberMaxDecimals: 4 },
@@ -106,40 +106,40 @@ it('parse maxDecimal', async () => {
 
 it('parse maxDecimal && minDecimal', async () => {
 
-  const ret = parse("argName", {
+  const ret = parse( {
     bla: "1.2"
   }, [
     { name: "bla", type: "number", numberMinDecimals: 1, numberMaxDecimals: 1 },
   ], "no_extra");
   strictEqual(ret.bla, 1.2);
   try {
-    parse("argName", {
+    parse( {
       bla: "1.23"
     }, [
       { name: "bla", type: "number", numberMinDecimals: 0, numberMaxDecimals: 1 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not number min decimals[0] max decimals[1]");
+    strictEqual((e).message, "arg.bla not number min decimals[0] max decimals[1]");
   }
   try {
-    parse("argName", {
+    parse( {
       bla: "1231.223"
     }, [
       { name: "bla", type: "number", numberMaxDecimals: 1 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not number max decimals[1]");
+    strictEqual((e).message, "arg.bla not number max decimals[1]");
   }
-  const ret2 = parse("argName", {
+  const ret2 = parse( {
     bla: "1231231.2234"
   }, [
     { name: "bla", type: "number", numberMinDecimals: 0, numberMaxDecimals: 4 },
   ], "no_extra");
   strictEqual(ret2.bla, 1231231.2234);
 
-  const ret3 = parse("argName", {
+  const ret3 = parse( {
     bla: "1231231.2234"
   }, [
     { name: "bla", type: "number", numberMinDecimals: 4, numberMaxDecimals: 4 },
@@ -152,16 +152,16 @@ it('parse noDecimal', async () => {
 
 
   try {
-    parse("argName", {
+    parse( {
       bla: "1231.223"
     }, [
       { name: "bla", type: "number", numberMaxDecimals: 0 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not number max decimals[0]");
+    strictEqual((e).message, "arg.bla not number max decimals[0]");
   }
-  const ret = parse("argName", {
+  const ret = parse( {
     bla: "1231"
   }, [
     { name: "bla", type: "number", numberMaxDecimals: 0 },
@@ -174,14 +174,14 @@ it('parse mail happy path no dmoain 2', async () => {
 
 
   try {
-    parse("argName", {
+    parse( {
       bla: "as@d@asd"
     }, [
       { name: "bla", type: "email" }
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not email");
+    strictEqual((e).message, "arg.bla not email");
   }
 
 
@@ -191,14 +191,14 @@ it('parse mail happy path no dmoain', async () => {
 
 
   try {
-    parse("argName", {
+    parse( {
       bla: "asd@asd"
     }, [
       { name: "bla", type: "email" }
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not email");
+    strictEqual((e).message, "arg.bla not email");
   }
 
 });
@@ -206,7 +206,7 @@ it('parse mail happy path no dmoain', async () => {
 it('parse email happy path', async () => {
 
 
-  const { bla } = parse("argName", {
+  const { bla } = parse( {
     bla: "asd@asd.dds"
   }, [
     { name: "bla", type: "email" }
@@ -217,7 +217,7 @@ it('parse email happy path', async () => {
 it('parse email happy path sub dmoain', async () => {
 
 
-  const { bla } = parse("argName", {
+  const { bla } = parse( {
     bla: "asasd-sda.d@asd.d20ds.asd.asd"
   }, [
     { name: "bla", type: "email" }
@@ -230,14 +230,14 @@ it('parse url happy path no protocol', async () => {
 
 
   try {
-    parse("argName", {
+    parse( {
       bla: "localhost/asd"
     }, [
       { name: "bla", type: "url" }
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not url");
+    strictEqual((e).message, "arg.bla not url");
   }
 
 
@@ -246,7 +246,7 @@ it('parse url happy path no protocol', async () => {
 it('parse url happy path', async () => {
 
 
-  const { bla } = parse("argName", {
+  const { bla } = parse( {
     bla: "http://localhost/asd"
   }, [
     { name: "bla", type: "url" }
@@ -258,7 +258,7 @@ it('parse url happy path', async () => {
 it('parse regex parser', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     bla: "AA-BB-123"
   }, [
     { name: "bla", type: "regex", regex: "AA-BB-\\d" },
@@ -273,14 +273,14 @@ it('parse custom parser AA-BB-#', async () => {
   parser.registerParser("AA-BB-#", ({ value }) => {
     return /AA-BB-\d/.test(value) ? value : undefined;
   });
-  const ret = parser.parse("argName", {
+  const ret = parser.parse( {
     bla: "AA-BB-123"
   }, [
     { name: "bla", type: "AA-BB-#" },
   ], "no_extra");
 
   try {
-    parser.parse("argName", {
+    parser.parse( {
       bla: "BB-AA-123"
     }, [
       { name: "bla", type: "AA-BB-#" },
@@ -288,13 +288,13 @@ it('parse custom parser AA-BB-#', async () => {
     strictEqual(false, true);
   } catch (e) {
     console.error(e);
-    strictEqual((e).message, "argName.bla not AA-BB-#");
+    strictEqual((e).message, "arg.bla not AA-BB-#");
   }
 
   parser = new Parser();
 
   try {
-    parser.parse("argName", {
+    parser.parse( {
       bla: "AA-BB-123"
     }, [
       { name: "bla", type: "AA-BB-#" },
@@ -314,14 +314,14 @@ it('parse custom parser AA-BB-# on custom instance', async () => {
   parser.registerParser("AA-BB-#", ({ value }) => {
     return /AA-BB-\d/.test(value) ? value : undefined;
   });
-  const ret = parser.parse("argName", {
+  const ret = parser.parse( {
     bla: "AA-BB-123"
   }, [
     { name: "bla", type: "AA-BB-#" },
   ], "no_extra");
 
   try {
-    parse("argName", {
+    parse( {
       bla: "AA-BB-123"
     }, [
       { name: "bla", type: "AA-BB-#" },
@@ -332,20 +332,20 @@ it('parse custom parser AA-BB-# on custom instance', async () => {
   }
 
   try {
-    parser.parse("argName", {
+    parser.parse( {
       bla: "BB-AA-123"
     }, [
       { name: "bla", type: "AA-BB-#" },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.bla not AA-BB-#");
+    strictEqual((e).message, "arg.bla not AA-BB-#");
   }
 
   parser = new Parser();
 
   try {
-    parser.parse("argName", {
+    parser.parse( {
       bla: "AA-BB-123"
     }, [
       { name: "bla", type: "AA-BB-#" },
@@ -362,7 +362,7 @@ it('parse custom parser register and unregister', async () => {
 
   let parser = new Parser();
   try {
-    parser.parse("argName", {
+    parser.parse( {
       bla: "bla"
     }, [
       { name: "bla", type: "blo" },
@@ -378,7 +378,7 @@ it('parse custom parser register and unregister', async () => {
     return "afhsakjf";
   });
 
-  const ret = parser.parse("argName", {
+  const ret = parser.parse( {
     bla: "bla"
   }, [
     { name: "bla", type: "blo" },
@@ -387,7 +387,7 @@ it('parse custom parser register and unregister', async () => {
   parser = new Parser();
 
   try {
-    parser.parse("argName", {
+    parser.parse( {
       bla: "bla"
     }, [
       { name: "bla", type: "blo" },
@@ -405,7 +405,7 @@ it('parse custom parser register and unregister with custom instance', async () 
 
   let parser = new Parser();
   try {
-    parser.parse("argName", {
+    parser.parse( {
       bla: "bla"
     }, [
       { name: "bla", type: "blo" },
@@ -421,7 +421,7 @@ it('parse custom parser register and unregister with custom instance', async () 
     return "afhsakjf";
   });
 
-  const ret = parser.parse("argName", {
+  const ret = parser.parse( {
     bla: "bla"
   }, [
     { name: "bla", type: "blo" },
@@ -430,7 +430,7 @@ it('parse custom parser register and unregister with custom instance', async () 
   parser = new Parser();
 
   try {
-    parser.parse("argName", {
+    parser.parse( {
       bla: "bla"
     }, [
       { name: "bla", type: "blo" },
@@ -447,14 +447,14 @@ it('parse simple invalid check minLength no_extra', async () => {
 
   try {
 
-    const ret = parse("argName", {
+    const ret = parse( {
       stringArray: ["", ""]
     }, [
       { name: "stringArray", type: "array", arrayType: "string", required: true, arrayMinLength: 3 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.stringArray not array3: of string");
+    strictEqual((e).message, "arg.stringArray not array3: of string");
   }
 
 });
@@ -463,14 +463,14 @@ it('parse simple invalid check maxLength no_extra', async () => {
 
   try {
 
-    const ret = parse("argName", {
+    const ret = parse( {
       stringArray: ["", ""]
     }, [
       { name: "stringArray", type: "array", arrayType: "string", required: true, arrayMaxLength: 1 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.stringArray not array:1 of string");
+    strictEqual((e).message, "arg.stringArray not array:1 of string");
   }
 
 });
@@ -479,14 +479,14 @@ it('parse simple invalid check maxLength and minLength', async () => {
 
   try {
 
-    const ret = parse("argName", {
+    const ret = parse( {
       stringArray: ["", ""]
     }, [
       { name: "stringArray", type: "array", arrayType: "string", required: true, arrayMinLength: 0, arrayMaxLength: 1 },
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.stringArray not array0::1 of string");
+    strictEqual((e).message, "arg.stringArray not array0::1 of string");
   }
 
 });
@@ -494,7 +494,7 @@ it('parse simple invalid check maxLength and minLength', async () => {
 it('parse simple valid check maxLength and minLength', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     stringArray: ["", ""]
   }, [
     { name: "stringArray", type: "array", arrayType: "string", required: true, arrayMinLength: 0, arrayMaxLength: 2 },
@@ -505,7 +505,7 @@ it('parse simple valid check maxLength and minLength', async () => {
 it('parse simple valid check maxLength and minLength required false', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
   }, [
     { name: "stringArray", type: "array", arrayType: "string", required: false, arrayMinLength: 0, arrayMaxLength: 2 },
   ], "no_extra");
@@ -516,15 +516,15 @@ it('parse simple allowNull false default happy path', async () => {
 
 
   try {
-    const ret = parse("argName", {
+    const ret = parse( {
       number: null
     }, [
       { name: "number", type: "number", required: true }
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.number not number");
-    strictEqual((e).argAttr, "argName.number");
+    strictEqual((e).message, "arg.number not number");
+    strictEqual((e).argAttr, "arg.number");
   }
 
 });
@@ -533,15 +533,15 @@ it('parse simple allowNull false happy path', async () => {
 
 
   try {
-    const ret = parse("argName", {
+    const ret = parse( {
       number: null
     }, [
       { name: "number", type: "number", required: true, allowNull: false }
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.number not number");
-    strictEqual((e).argAttr, "argName.number");
+    strictEqual((e).message, "arg.number not number");
+    strictEqual((e).argAttr, "arg.number");
   }
 
 });
@@ -549,7 +549,7 @@ it('parse simple allowNull false happy path', async () => {
 it('parse simple allowNull happy path', async () => {
 
 
-  const { number } = parse("argName", {
+  const { number } = parse( {
     number: null
   }, [
     { name: "number", type: "number", required: true, allowNull: true }
@@ -562,7 +562,7 @@ it('parse simple invalid valid null  check no_extra', async () => {
 
 
   try {
-    parse("argName", null, [
+    parse( null, [
       { name: "number", type: "number", required: true },
       { name: "string", type: "string", required: true },
       { name: "boolean", type: "boolean", required: true },
@@ -572,15 +572,15 @@ it('parse simple invalid valid null  check no_extra', async () => {
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "invalid argName");
-    strictEqual((e).argAttr, "argName");
+    strictEqual((e).message, "invalid arg");
+    strictEqual((e).argAttr, "arg");
   }
 
 });
 it('parse simple valid check no_extra with enum and parseJSON', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: false,
@@ -609,7 +609,7 @@ it('parse simple valid check no_extra with enum and parseJSON', async () => {
 it('parse simple valid check no_extra with array and parseJSON', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: false,
@@ -639,7 +639,7 @@ it('parse simple valid check no_extra with array and parseJSON', async () => {
 it('parse simple valid check no_extra with array nested and parseJSON', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: false,
@@ -670,7 +670,7 @@ it('parse simple invalid check no_extra with enum and parseJSON', async () => {
 
   try {
 
-    const ret = parse("argName", {
+    const ret = parse( {
       number: 1,
       string: "string",
       boolean: false,
@@ -696,7 +696,7 @@ it('parse simple invalid check no_extra with enum and parseJSON', async () => {
 it('parse simple valid check no_extra with enum', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: false,
@@ -724,7 +724,7 @@ it('parse simple valid check no_extra with enum', async () => {
 it('parse simple valid check no_extra with enum and multiple', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: false,
@@ -752,7 +752,7 @@ it('parse simple valid check no_extra with enum and multiple', async () => {
   strictEqual(ret.stringArray.length, 2);
   strictEqual(ret.numberArray.length, 3);
 
-  const ret2 = parse("argName", {
+  const ret2 = parse( {
     number: 1,
     string: "string",
     boolean: false,
@@ -781,7 +781,7 @@ it('parse simple valid check no_extra with enum and multiple', async () => {
   strictEqual(ret2.numberArray.length, 3);
 
   try {
-    parse("argName", {
+    parse( {
       number: 1,
       string: "string",
       boolean: false,
@@ -803,7 +803,7 @@ it('parse simple valid check no_extra with enum and multiple', async () => {
     ], "no_extra");
     strictEqual(true, false);
   } catch (e) {
-    strictEqual((e).message, "argName.object not multiple as defined.");
+    strictEqual((e).message, "arg.object not multiple as defined.");
   }
 
 });
@@ -811,7 +811,7 @@ it('parse simple valid check no_extra with enum and multiple', async () => {
 it('parse simple valid check no_extra with enum in array', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: true,
@@ -838,7 +838,7 @@ it('parse simple valid check no_extra with enum in array', async () => {
 it('parse simple valid check no_extra with enum in array with forceArray', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: true,
@@ -866,7 +866,7 @@ it('parse simple invalid check no_extra with enum in array with forceArray', asy
 
 
   try {
-    parse("argName", {
+    parse( {
       number: 1,
       string: "string",
       boolean: true,
@@ -882,7 +882,7 @@ it('parse simple invalid check no_extra with enum in array with forceArray', asy
       { name: "numberArray", type: "array", arrayType: "number", required: true }
     ], "no_extra");
   } catch (e) {
-    strictEqual((e).message, "argName.numberArray not array of number");
+    strictEqual((e).message, "arg.numberArray not array of number");
   }
 
 });
@@ -891,7 +891,7 @@ it('parse simple invalid check no_extra with enum in array', async () => {
 
 
   try {
-    const ret = parse("argName", {
+    const ret = parse( {
       number: 1,
       string: "string",
       boolean: true,
@@ -908,8 +908,8 @@ it('parse simple invalid check no_extra with enum in array', async () => {
     ], "no_extra");
     strictEqual(true, false);
   } catch (e) {
-    strictEqual((e).message, "argName.stringArray.1 not enum as defined. valid values [object,function]");
-    strictEqual((e).argAttr, "argName.stringArray.1");
+    strictEqual((e).message, "arg.stringArray.1 not enum as defined. valid values [object,function]");
+    strictEqual((e).argAttr, "arg.stringArray.1");
   }
 
 
@@ -918,7 +918,7 @@ it('parse simple invalid check no_extra with enum in nested', async () => {
 
 
   try {
-    const ret = parse("argName", {
+    const ret = parse( {
       number: 1,
       string: "string",
       boolean: true,
@@ -950,8 +950,8 @@ it('parse simple invalid check no_extra with enum in nested', async () => {
     ], "no_extra");
     strictEqual(true, false);
   } catch (e) {
-    strictEqual((e).message, "argName.nested.stringArray.1 not enum as defined. valid values [object,function]");
-    strictEqual((e).argAttr, "argName.nested.stringArray.1");
+    strictEqual((e).message, "arg.nested.stringArray.1 not enum as defined. valid values [object,function]");
+    strictEqual((e).argAttr, "arg.nested.stringArray.1");
   }
 
 });
@@ -959,7 +959,7 @@ it('parse simple invalid check no_extra with enum in nested not array', async ()
 
 
   try {
-    const ret = parse("argName", {
+    const ret = parse( {
       number: 1,
       string: "string",
       boolean: true,
@@ -990,8 +990,8 @@ it('parse simple invalid check no_extra with enum in nested not array', async ()
     ], "no_extra");
     strictEqual(true, false);
   } catch (e) {
-    strictEqual((e).message, "argName.nested.string not enum as defined. valid values [object,function]");
-    strictEqual((e).argAttr, "argName.nested.string");
+    strictEqual((e).message, "arg.nested.string not enum as defined. valid values [object,function]");
+    strictEqual((e).argAttr, "arg.nested.string");
   }
 
 });
@@ -999,7 +999,7 @@ it('parse simple invalid check no_extra with enum', async () => {
 
 
   try {
-    const ret = parse("argName", {
+    const ret = parse( {
       number: 1,
       string: "not valid",
       boolean: true,
@@ -1013,15 +1013,15 @@ it('parse simple invalid check no_extra with enum', async () => {
     ], "no_extra");
     strictEqual(true, false);
   } catch (e) {
-    strictEqual((e).message, "argName.string not enum as defined. valid values [string,number]");
-    strictEqual((e).argAttr, "argName.string");
+    strictEqual((e).message, "arg.string not enum as defined. valid values [string,number]");
+    strictEqual((e).argAttr, "arg.string");
   }
 
 });
 it('parse simple valid check no_extra with enum in nested and simplemap as options', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: true,
@@ -1086,7 +1086,7 @@ it('parse simple valid check no_extra with enum in nested and simplemap as optio
 it('parse simple valid check no_extra with enum in nested', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: true,
@@ -1130,7 +1130,7 @@ it('parse simple valid check no_extra with enum in nested', async () => {
 it('parse simple valid check no_extra', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: true,
@@ -1157,7 +1157,7 @@ it('parse simple valid check no_extra', async () => {
 it('parse simple valid check with nested array and no_extra', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: true,
@@ -1197,7 +1197,7 @@ it('parse simple valid check with nested array and no_extra', async () => {
 it('parse simple valid check nested no_extra', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: true,
@@ -1234,7 +1234,7 @@ it('parse simple valid check nested no_extra', async () => {
 it('parse simple valid check nested add_extra and no_extra', async () => {
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     string: "string",
     boolean: true,
@@ -1276,7 +1276,7 @@ it('parse simple invalid check nested no_extra', async () => {
 
 
   try {
-    const ret = parse("argName", {
+    const ret = parse( {
       number: 1,
       string: "string",
       boolean: true,
@@ -1302,8 +1302,8 @@ it('parse simple invalid check nested no_extra', async () => {
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.nested.boolean not defined");
-    strictEqual((e).argAttr, "argName.nested.boolean");
+    strictEqual((e).message, "arg.nested.boolean not defined");
+    strictEqual((e).argAttr, "arg.nested.boolean");
   }
 
 });
@@ -1311,7 +1311,7 @@ it('parse simple invalid number check no_extra', async () => {
 
   try {
 
-    parse("argName", {
+    parse( {
       number: "number",
       string: "string",
       boolean: true,
@@ -1328,8 +1328,8 @@ it('parse simple invalid number check no_extra', async () => {
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.number not number");
-    strictEqual((e).argAttr, "argName.number");
+    strictEqual((e).message, "arg.number not number");
+    strictEqual((e).argAttr, "arg.number");
   }
 
 });
@@ -1338,7 +1338,7 @@ it('parse simple invalid extra key check no_extra', async () => {
 
   try {
 
-    parse("argName", {
+    parse( {
       number: 1,
       extraKey: "bla",
       string: "string",
@@ -1356,8 +1356,8 @@ it('parse simple invalid extra key check no_extra', async () => {
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.extraKey option not valid [extraKey]");
-    strictEqual((e).argAttr, "argName.extraKey");
+    strictEqual((e).message, "arg.extraKey option not valid [extraKey]");
+    strictEqual((e).argAttr, "arg.extraKey");
   }
 
 });
@@ -1366,7 +1366,7 @@ it('parse simple valid extra key check add_extra', async () => {
 
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     extraKey: "bla",
     string: "string",
@@ -1397,7 +1397,7 @@ it('parse simple valid extra key check remove_extra', async () => {
 
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: 1,
     extraKey: "bla",
     string: "string",
@@ -1429,7 +1429,7 @@ it('parse simple valid extra key check remove_extra', async () => {
 it('parse simple {} no_extra', async () => {
 
 
-  parse("argName", {}, [
+  parse( {}, [
     { name: "number", type: "number", required: false },
     { name: "string", type: "string", required: false },
     { name: "boolean", type: "boolean", required: false },
@@ -1445,7 +1445,7 @@ it('parse simple {number: undefined} no_extra', async () => {
 
 
   try {
-    const ret = parse("argName", {
+    const ret = parse( {
       number: undefined
     }, [
       { name: "number", type: "number", required: true },
@@ -1458,8 +1458,8 @@ it('parse simple {number: undefined} no_extra', async () => {
     console.dir(ret);
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.number not defined");
-    strictEqual((e).argAttr, "argName.number");
+    strictEqual((e).message, "arg.number not defined");
+    strictEqual((e).argAttr, "arg.number");
   }
 
 });
@@ -1469,7 +1469,7 @@ it('parse simple {number: undefined} no_extra defautlValue', async () => {
 
 
 
-  const { number } = parse("argName", {
+  const { number } = parse( {
     number: undefined
   }, [
     { name: "number", type: "number", required: false, defaultValue: 33 },
@@ -1488,7 +1488,7 @@ it('parse simple {} no_extra defautlValue', async () => {
 
 
 
-  const { number } = parse("argName", {
+  const { number } = parse( {
   }, [
     { name: "number", type: "number", required: false, defaultValue: 33 },
     { name: "string", type: "string", required: false },
@@ -1506,7 +1506,7 @@ it('parse simple {number} no_extra numberMax', async () => {
 
 
   try {
-    const { number } = parse("argName", {
+    const { number } = parse( {
       number: 33
     }, [
       { name: "number", type: "number", required: false, numberMax: 32 },
@@ -1518,7 +1518,7 @@ it('parse simple {number} no_extra numberMax', async () => {
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.number not number:32");
+    strictEqual((e).message, "arg.number not number:32");
   }
 
 });
@@ -1527,7 +1527,7 @@ it('parse simple {number} no_extra numberMax happy path', async () => {
 
 
 
-  const { number } = parse("argName", {
+  const { number } = parse( {
     number: 33
   }, [
     { name: "number", type: "number", required: false, numberMax: 33 },
@@ -1547,14 +1547,14 @@ it('parse simple {number} no_extra numberMin', async () => {
 
 
   try {
-    const { number } = parse("argName", {
+    const { number } = parse( {
       number: 33
     }, [
       { name: "number", type: "number", required: false, numberMin: 34 }
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.number not number34:");
+    strictEqual((e).message, "arg.number not number34:");
   }
 
 });
@@ -1562,7 +1562,7 @@ it('parse simple {number} no_extra numberMin 0 and defaultValue 0 happy path', a
 
 
 
-  const { number } = parse("argName", {
+  const { number } = parse( {
     number: 0
   }, [
     { name: "number", type: "number", required: false, numberMin: 0, defaultValue: 0 }
@@ -1576,14 +1576,14 @@ it('parse simple {string} no_extra stringMinLength', async () => {
 
 
   try {
-    const { string } = parse("argName", {
+    const { string } = parse( {
       string: "1"
     }, [
       { name: "string", type: "string", required: false, stringMinLength: 2 }
     ], "no_extra");
     strictEqual(false, true);
   } catch (e) {
-    strictEqual((e).message, "argName.string not string2:");
+    strictEqual((e).message, "arg.string not string2:");
   }
 
 });
@@ -1593,14 +1593,14 @@ it('parse simple {string} no_extra stringMaxLength', async () => {
 
 
   try {
-    const { string } = parse("argName", {
+    const { string } = parse( {
       string: "12"
     }, [
       { name: "string", type: "string", required: false, stringMaxLength: 1 },
     ], "no_extra");
     strictEqual(true, false);
   } catch (e) {
-    strictEqual((e).message, "argName.string not string:1");
+    strictEqual((e).message, "arg.string not string:1");
   }
 
 });
@@ -1609,7 +1609,7 @@ it('parse simple {string} no_extra stringMaxLength happy path', async () => {
 
 
 
-  const { string } = parse("argName", {
+  const { string } = parse( {
     string: "1"
   }, [
     { name: "string", type: "string", required: false, stringMaxLength: 1 },
@@ -1623,7 +1623,7 @@ it('parse simple {string} no_extra stringMaxLength happy path', async () => {
 
 
 
-  const ret = parse("argName", {
+  const ret = parse( {
     number: undefined
   }, [
     { name: "number", type: "number", required: false },

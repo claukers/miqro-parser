@@ -131,9 +131,7 @@ const name2 = get({
       name: "name"
     }
   }
-}, "user.info.name", "noname", {
-  type: "string"
-});
+}, "user.info.name", "noname", "string");
 
 strictEqual(name2, "name");
 ```

@@ -12,7 +12,7 @@ it("happy path", async () => {
       key2: "2"
     }
   }
-  const parsed = parse("arg", value, {
+  const parsed = parse(value, {
     dict: {
       type: "dict",
       dictType: "string"

@@ -9,7 +9,7 @@ it("parser custom happy path", () => {
   const parser = new Parser();
 
   parser.registerParser("custom1_item", (args, p) => {
-    return p.parse(args.name, {
+    return p.parse({
       [args.attrName]: args.value
     }, {
       [args.attrName]: {
@@ -20,10 +20,10 @@ it("parser custom happy path", () => {
           }
         }
       }
-    }, "no_extra")[args.attrName];
+    }, "no_extra", args.name)[args.attrName];
   });
   parser.registerParser("custom1", (args, p) => {
-    return p.parse(args.name, {
+    return p.parse({
       [args.attrName]: args.value
     }, {
       [args.attrName]: {
@@ -38,21 +38,21 @@ it("parser custom happy path", () => {
           }
         }
       }
-    }, "no_extra")[args.attrName];
+    }, "no_extra", args.name)[args.attrName];
   });
 
   parser.registerParser("custom1_list", (args, p) => {
-    return p.parse(args.name, {
+    return p.parse({
       [args.attrName]: args.value
     }, {
       [args.attrName]: {
         type: "array",
         arrayType: "custom1"
       }
-    }, "no_extra")[args.attrName];
+    }, "no_extra", args.name)[args.attrName];
   });
 
-  const parsed = parser.parse("list", {
+  const parsed = parser.parse({
     list: [
       {
         name: "name",
@@ -73,7 +73,7 @@ it("parser custom happy path", () => {
 
 it("test list alias", async () => {
   const parser = new Parser();
-  const ret = parser.parse("name", {
+  const ret = parser.parse({
     A: ["1"],
     C: ["1", 2, "33"],
     B: [true, false]
@@ -90,14 +90,12 @@ it("test list alias", async () => {
 
 it("test alias", async () => {
   const parser = new Parser();
-  parser.registerParser("A", {
-    options: {
-      value: {
-        type: "number"
-      }
+  parser.registerType("A", {
+    value: {
+      type: "number"
     }
   })
-  const ret = parser.parse("name", {
+  const ret = parser.parse({
     A: [{value: "1"}, {value: 2}, {value: "33"}]
   }, {
     A: "A[]"
