@@ -28,5 +28,5 @@ export const get = (obj: any, attrPath: string, defaultValue?: any, option?: Par
   if (!option) {
     return value;
   }
-  return (parser ? parser : {parse}).parse(attrPath, {value}, {value: option}, "no_extra").value;
+  return (parser ? parser : {parse}).parse({value}, {value: option}, "no_extra", attrPath).value;
 }

@@ -8,7 +8,7 @@ import {strictEqual} from "assert";
 
 const parser = new Parser();
 const valueNumber = "123";
-const parsed = parser.parse("value", valueNumber, "number");
+const parsed = parser.parse(valueNumber, "number");
 strictEqual(typeof parsed, "number");
 ```
 
@@ -23,14 +23,14 @@ const valueObject = {
   attr1: "13",
   attr2: ["true", false]
 };
-const parsed = parser.parse("value2", valueObject, {
+const parsed = parser.parse(valueObject, {
   attr1: "number",
   attr2: "boolean[]"
 });
 strictEqual(typeof parsed.attr1, "number");
 
 // to force array use []!
-const parsedForceArray = parser.parse("value2", {
+const parsedForceArray = parser.parse({
   attr2: true
 }, {
   attr1: "number?", // optional
@@ -46,20 +46,20 @@ import {Parser} from "@miqro/parser";
 import {strictEqual} from "assert";
 
 const parser = new Parser();
-const valueObject2 = {
-  attr1: "13",
-  attr2: {
-    custom: "custom1"
-  }
-};
-
 parser.registerParser("customType", {
   options: {
     custom: "string"
   }
 });
 
-const parsed = parser.parse("value3", valueObject2, {
+const value = {
+  attr1: "13",
+  attr2: {
+    custom: "custom1"
+  }
+};
+
+const parsed = parser.parse(value, {
   attr1: "number",
   attr2: "customType"
 });
@@ -73,7 +73,7 @@ import {Parser} from "@miqro/parser";
 import {strictEqual} from "assert";
 
 const parser = new Parser();
-const parsed = parser.parse("value", {
+const parsed = parser.parse({
   forceArray: "123",
   attr: "123",
   attr2: "true",

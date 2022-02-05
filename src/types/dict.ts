@@ -9,7 +9,7 @@ export function parseDict(args: ParseValueArgs, parser: ParserInterface) {
     const keys = Object.keys(args.value);
     const parsed: any = {};
     for (const key of keys) {
-      parsed[key] = parser.parse(args.name, {
+      parsed[key] = parser.parse({
         [args.attrName]: {
           [key]: args.value[key]
         }
@@ -23,7 +23,7 @@ export function parseDict(args: ParseValueArgs, parser: ParserInterface) {
             mode: "no_extra"
           }
         }
-      }, "no_extra")[args.attrName][key];
+      }, "no_extra", args.name)[args.attrName][key];
     }
     return parsed;
   } else {

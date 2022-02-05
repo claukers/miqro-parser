@@ -17,24 +17,48 @@ import {
   parseEmail,
   parseEnum,
   parseFunction,
-  parseGroupPolicy,
   parseMultiple,
   parseNested,
   parseNumber,
   parseObject,
-  parseOption,
-  parseOptionMap,
-  parseOptions,
-  parseOptionsBase,
-  parseOptionsMode,
-  parseParserInterface,
   parseRegex,
-  parseSessionHandlerOptions,
   parseString,
   parseURL
 } from "./types";
 
 const RESERVED = ["|", "!", "?"];
+
+const PARSE_OPTION_BASE: ParseOptionMap = {
+  type: "string",
+  regex: "string?",
+  multipleOptions: "ParseOptionsBase[]!?",
+  forceArray: "boolean?",
+  allowNull: "boolean?",
+  arrayType: "string?",
+  arrayMinLength: "number?",
+  arrayMaxLength: "number?",
+  numberMaxDecimals: "number?",
+  numberMinDecimals: "number?",
+  numberMin: "number?",
+  numberMax: "number?",
+  stringMaxLength: "number?",
+  stringMinLength: "number?",
+  nestedOptions: {
+    type: "nested?",
+    nestedOptions: {
+      options: {
+        options: "ParseOption[]!|ParseOptionMap",
+        mode: "ParseOptionsMode?"
+      },
+      mode: "no_extra"
+    }
+  },
+  enumValues: "string[]?",
+  parseJSON: "boolean?",
+  description: "string?",
+  required: "boolean?",
+  defaultValue: "any?"
+};
 
 const parseValue = (args: ParseValueArgs, parsers: { [name: string]: ParseValueValidator }, p: Parser): ParseValueValidatorResponse => {
   const {
@@ -146,14 +170,84 @@ export class Parser implements ParserInterface {
     this.registerParser("url", parseURL);
     this.registerParser("function", parseFunction);
     this.registerParser("email", parseEmail);
-    this.registerParser("ParseOption", parseOption);
-    this.registerParser("ParseOptionMap", parseOptionMap);
-    this.registerParser("ParseOptionsBase", parseOptionsBase);
-    this.registerParser("ParseOptions", parseOptions);
-    this.registerParser("ParseOptionsMode", parseOptionsMode);
-    this.registerParser("ParserInterface", parseParserInterface);
-    this.registerParser("GroupPolicy", parseGroupPolicy);
-    this.registerParser("SessionHandlerOptions", parseSessionHandlerOptions);
+    this.registerEnum("ParseOptionsMode", ["remove_extra", "add_extra", "no_extra"]);
+    this.registerParser("ParseOption", {
+      options: {
+        ...PARSE_OPTION_BASE,
+        name: "string"
+      },
+      mode: "no_extra"
+    });
+    this.registerParser("ParseOptionsBase", {
+      options: PARSE_OPTION_BASE,
+      mode: "no_extra"
+    });
+    this.registerDict("ParseOptionMap", "ParseOptionsBase|string");
+    this.registerParser("ParseOptions", {
+      options: {
+        description: "string?",
+        options: "ParseOptionMap|ParseOption[]",
+        mode: "ParseOptionsMode?"
+      },
+      mode: "no_extra"
+    });
+    this.registerParser("ParserInterface", {
+      options: {
+        parse: "function"
+      },
+      mode: "add_extra"
+    });
+    this.registerParser("GroupPolicy", {
+      options: {
+        group: "string[]",
+        groupPolicy: {
+          type: "enum",
+          enumValues: ["at_least_one", "all"]
+        }
+      },
+      mode: "no_extra"
+    });
+    this.registerParser("SessionHandlerOptions", {
+      options: {
+        tokenLocation: {
+          type: "enum",
+          enumValues: ["header", "query", "cookie"]
+        },
+        tokenLocationName: "string|function",
+        setCookieOptions: {
+          type: "nested?",
+          nestedOptions: {
+            options: {
+              httpOnly: "boolean",
+              secure: "boolean",
+              path: "string|function",
+              sameSite: {
+                type: "enum",
+                enumValues: ["lax", "strict", "none"]
+              }
+            },
+            mode: "no_extra"
+          }
+        }
+      },
+      mode: "no_extra"
+    });
+  }
+
+  public registerDict(type: string, dictType: string): void {
+    return this.registerParser(type, (args, parser) => parseValue({
+      ...args,
+      dictType,
+      type: "dict",
+    }, this.parsers, this));
+  }
+
+  public registerEnum(type: string, enumValues: string[]): void {
+    return this.registerParser(type, (args, parser) => parseValue({
+      ...args,
+      enumValues,
+      type: "enum",
+    }, this.parsers, this));
   }
 
   public registerParser(type: string, options: ParseValueValidator | ParseOptions, noList = false): void {
@@ -193,10 +287,10 @@ export class Parser implements ParserInterface {
 
   /* eslint-disable  @typescript-eslint/explicit-module-boundary-types */
   public parse(
-    name: string,
     arg: any,
     options: ParseOption[] | ParseOptionMap | string,
-    mode: ParseOptionsMode = "no_extra"): any {
+    mode: ParseOptionsMode = "no_extra",
+    name: string = "arg"): any {
     const ret: { [name: string]: any } = {};
     const optionsAsStringFlag = typeof options === "string";
     let oldName = name;
@@ -324,8 +418,8 @@ const defaultParser = new Parser();
 
 /* eslint-disable  @typescript-eslint/explicit-module-boundary-types */
 export const parse = (
-  name: string,
   arg: any,
   options: ParseOption[] | ParseOptionMap | string,
-  mode: ParseOptionsMode = "no_extra"
-): any => defaultParser.parse(name, arg, options, mode);
+  mode: ParseOptionsMode = "no_extra",
+  name: string = "arg"
+): any => defaultParser.parse(arg, options, mode, name);

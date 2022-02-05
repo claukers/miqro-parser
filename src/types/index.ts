@@ -10,6 +10,5 @@ export * from "./function";
 export * from "./object";
 export * from "./regex";
 export * from "./dict";
-export * from "./parser";
 export * from "./string";
 export * from "./url";

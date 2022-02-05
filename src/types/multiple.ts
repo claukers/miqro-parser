@@ -8,12 +8,12 @@ export function parseMultiple(args: ParseValueArgs, parser: ParserInterface) {
   for (let i = 0; i < args.multipleOptions.length; i++) {
     const basicOption = args.multipleOptions[i];
     try {
-      const aiType = parser.parse(args.name, {[args.attrName]: args.value}, {
+      const aiType = parser.parse({[args.attrName]: args.value}, {
         [args.attrName]: {
           ...basicOption,
           forceArray: args.forceArray
         },
-      }, "no_extra")[args.attrName];
+      }, "no_extra", args.name)[args.attrName];
       if (aiType !== undefined) {
         return aiType;
       }

@@ -4,16 +4,15 @@ export interface ParseOptions {
   mode?: ParseOptionsMode;
 }
 
-export interface SimpleMap<T> {
+export interface Dict<T> {
   [key: string]: T;
 }
 
 export type ParseOptionsMode = "remove_extra" | "add_extra" | "no_extra";
-export type SimpleTypes = string | boolean | number | Array<SimpleTypes> | SimpleMap<SimpleTypes>;
 export type ParseOptionTypeWithOutOptions = "string" | "boolean" | "number" | "object" | "any" | "array" | string;
 export type ParseOptionType = "regex" | "nested" | "enum" | "multiple" | ParseOptionTypeWithOutOptions;
 
-export type ParseOptionMap = SimpleMap<ParseOptionsBase | ParseOptionTypeWithOutOptions>;
+export type ParseOptionMap = Dict<ParseOptionsBase | ParseOptionTypeWithOutOptions>;
 
 export interface ParseOptionsBase {
   type: ParseOptionType;
@@ -58,8 +57,8 @@ export type ParseValueValidator = (args: ParseValueArgs, parser: ParserInterface
 
 export interface ParserInterface {
   parse(
-    name: string,
     arg: any,
     options: ParseOption[] | ParseOptionMap | string,
-    mode?: ParseOptionsMode): any
+    mode?: ParseOptionsMode,
+    name?: string): any
 }

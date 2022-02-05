@@ -36,7 +36,7 @@ export function parseArray(args: ParseValueArgs, parser: ParserInterface) {
   } else {
     for (let i = 0; i < value.length; i++) {
       const v = value[i];
-      const parsed = parser.parse(`${name}.${attrName}`, {
+      const parsed = parser.parse({
         [i.toString()]: v
       }, {
         [i.toString()]: {
@@ -56,7 +56,7 @@ export function parseArray(args: ParseValueArgs, parser: ParserInterface) {
           arrayMaxLength,
           arrayMinLength,
         }
-      }, "no_extra");
+      }, "no_extra", `${name}.${attrName}`);
 
       if (parsed[i] === undefined) {
         return;

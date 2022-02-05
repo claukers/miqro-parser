@@ -5,5 +5,5 @@ export function parseNested(args: ParseValueArgs, parser: ParserInterface) {
   if (!args.nestedOptions) {
     throw new ParseOptionsError(`unsupported type ${args.type} without nestedOptions`);
   }
-  return parser.parse(`${args.name}.${args.attrName}`, args.value, args.nestedOptions.options, args.nestedOptions.mode);
+  return parser.parse(args.value, args.nestedOptions.options, args.nestedOptions.mode, `${args.name}.${args.attrName}`);
 }
