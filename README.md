@@ -9,6 +9,7 @@ import {strictEqual} from "assert";
 const parser = new Parser();
 const valueNumber = "123";
 const parsed = parser.parse(valueNumber, "number");
+
 strictEqual(typeof parsed, "number");
 ```
 
@@ -27,6 +28,7 @@ const parsed = parser.parse(valueObject, {
   attr1: "number",
   attr2: "boolean[]"
 });
+
 strictEqual(typeof parsed.attr1, "number");
 
 // to force array use []!
@@ -36,33 +38,47 @@ const parsedForceArray = parser.parse({
   attr1: "number?", // optional
   attr2: "boolean[]!"
 });
+
 strictEqual(parsedForceArray.attr2[0], true);
 ```
 
-custom type
+custom types
 
 ```typescript
 import {Parser} from "@miqro/parser";
 import {strictEqual} from "assert";
 
 const parser = new Parser();
-parser.registerParser("customType", {
-  options: {
-    custom: "string"
-  }
+parser.registerEnum("CustomStatus", ["OK", "NOK"]);
+parser.registerDict("Dict<CustomStatus>", "CustomStatus");
+parser.registerType("CustomType", {
+  custom: "string",
+  status: "CustomStatus",
+  statusMap: "Dict<CustomStatus>"
 });
+// or as a function
+/*parser.registerParser((args, parser) => {
+   return ... // return parsed value
+});*/
+
 
 const value = {
   attr1: "13",
   attr2: {
-    custom: "custom1"
+    custom: "custom1",
+    status: "NOK",
+    statusMap: {
+        registered: "OK",
+        emailValidated: "NOK"
+    }
   }
 };
 
 const parsed = parser.parse(value, {
   attr1: "number",
-  attr2: "customType"
+  attr2: "CustomType"
 });
+
 strictEqual(parsed.attr1, 13);
 ```
 
@@ -85,6 +101,7 @@ const parsed = parser.parse({
   attr2: "boolean|number|string",
   attr3: "boolean|number|string",
 });
+
 strictEqual(parsed.attr, 123);
 strictEqual(parsed.attr2, true);
 strictEqual(parsed.attr3, "text");
@@ -104,6 +121,7 @@ const obj = {
 }
 
 const name = get(obj, "user.info.name", "noname");
+
 strictEqual(name, "noname");
 
 // using parse
@@ -116,5 +134,6 @@ const name2 = get({
 }, "user.info.name", "noname", {
   type: "string"
 });
+
 strictEqual(name2, "name");
 ```
