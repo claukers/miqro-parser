@@ -299,6 +299,7 @@ export class Parser implements ParserInterface {
       };
       name = "";
     }
+
     if (!(options instanceof Array)) {
       options = parseOptionMap2ParseOptionList(options as ParseOptionMap);
     }
