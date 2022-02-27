@@ -1,6 +1,6 @@
 # @miqro/parser
 
-parse value
+## parse value
 
 ```typescript
 import {Parser} from "@miqro/parser";
@@ -13,7 +13,7 @@ const parsed = parser.parse(valueNumber, "number");
 strictEqual(typeof parsed, "number");
 ```
 
-parse object
+## parse object
 
 ```typescript
 import {Parser} from "@miqro/parser";
@@ -42,7 +42,7 @@ const parsedForceArray = parser.parse({
 strictEqual(parsedForceArray.attr2[0], true);
 ```
 
-custom types
+## custom types
 
 ```typescript
 import {Parser} from "@miqro/parser";
@@ -58,7 +58,7 @@ parser.registerType("CustomType", {
 });
 // or as a function
 /*parser.registerParser((args, parser) => {
-   return ... // return parsed value
+   return ... // return parsed value or undefined if cannot be parsed
 });*/
 
 
@@ -68,8 +68,8 @@ const value = {
     custom: "custom1",
     status: "NOK",
     statusMap: {
-        registered: "OK",
-        emailValidated: "NOK"
+      registered: "OK",
+      emailValidated: "NOK"
     }
   }
 };
@@ -82,7 +82,7 @@ const parsed = parser.parse(value, {
 strictEqual(parsed.attr1, 13);
 ```
 
-or ( **|** ), forceArray ( **[]!** ) and optional ( **?** )
+## or ( **|** ), forceArray ( **[]!** ) and optional ( **?** )
 
 ```typescript
 import {Parser} from "@miqro/parser";
@@ -108,7 +108,7 @@ strictEqual(parsed.attr3, "text");
 strictEqual(parsed.forceArray[0], 123);
 ```
 
-get
+## get
 
 ```typescript
 import {get} from "@miqro/parser";
@@ -134,4 +134,91 @@ const name2 = get({
 }, "user.info.name", "noname", "string");
 
 strictEqual(name2, "name");
+```
+
+## built-in types
+
+- string
+  - options
+    - stringMinLength
+    - stringMaxLength
+- regex
+  - options
+    - regex
+- url
+  - options
+    - stringMinLength
+    - stringMaxLength
+- function
+- email
+  - options
+    - stringMinLength
+    - stringMaxLength
+- decodeHtml
+  - options
+    - stringMinLength
+    - stringMaxLength
+- encodeHtml
+  - options
+    - stringMinLength
+    - stringMaxLength
+- integer
+  - numberMin
+  - numberMax
+- number
+  - options
+    - numberMin
+    - numberMax
+    - numberMaxDecimals
+    - numberMinDecimals
+- any
+- object
+- array
+- dict
+  - options
+    - dictType
+- boolean
+- enum
+  - options
+    - enumValues
+- multiple
+  - options
+    - multipleOptions
+- nested
+  - options
+    - nestedOptions
+- string1
+
+### built-in options
+
+to use the built-in type options use type as ```object``` instead of a string for example.
+
+```typescript
+import {Parser} from "@miqro/parser";
+
+const parser = new Parser();
+parser.registerType("CustomType", {
+  // value will use stringMinLength option from built-in string type
+  value: {
+    type: "string",
+    stringMinLength: 3
+  },
+  // other will use the default options os built-in string type
+  other: "string"
+});
+```
+
+### type aliases
+
+to avoid using built-in type options create a type alias.
+
+```typescript
+import {Parser} from "@miqro/parser";
+
+const parser = new Parser();
+parser.registerParser("my-integer", {
+  type: "number", // any registered type
+  numberMinDecimals: 0,
+  numberMaxDecimals: 0
+});
 ```

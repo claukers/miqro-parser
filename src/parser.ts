@@ -2,6 +2,7 @@ import {
   ParseOption,
   ParseOptionMap,
   ParseOptions,
+  ParseOptionsBase,
   ParseOptionsMode,
   ParserInterface,
   ParseValueArgs,
@@ -31,7 +32,10 @@ import {
 const RESERVED = ["|", "!", "?"];
 
 const PARSE_OPTION_BASE: ParseOptionMap = {
-  type: "string",
+  type: {
+    type: "string",
+    stringMinLength: 1
+  },
   regex: "string?",
   multipleOptions: "ParseOptionsBase[]!?",
   forceArray: "boolean?",
@@ -218,6 +222,16 @@ export class Parser implements ParserInterface {
         }
       }
     });
+    // aliases need the ParseOptionsBase type registered to work
+    this.registerParser("integer", {
+      type: "number",
+      numberMinDecimals: 0,
+      numberMaxDecimals: 0
+    });
+    this.registerParser("string1", {
+      type: "string",
+      stringMinLength: 1
+    });
   }
 
   public registerDict(type: string, dictType: string, noList = false): void {
@@ -247,11 +261,24 @@ export class Parser implements ParserInterface {
     }, this.parsers, this), noList);
   }
 
-  public registerParser(type: string, options: ParseValueValidator, noList = false): void {
+  public registerParser(type: string, options: ParseValueValidator | ParseOptionsBase, noList = false): void {
     if (typeof type !== "string") {
       throw new Error("type must be a string");
     }
-    if (typeof options !== "function") {
+
+    if (typeof options === "object") {
+      const baseOptions = this.parse(options, "ParseOptionsBase") as ParseOptionsBase;
+      if (options.type === type) {
+        throw new Error("cannot register parser. type cannot be the same as options.type.");
+      }
+      if (typeof options.type !== "string") {
+        throw new Error("cannot register parser. options.type must be a string.");
+      }
+      options = ((args: ParseValueArgs, parser: ParserInterface): ParseValueValidatorResponse => parseValue({
+        ...args,
+        ...baseOptions
+      }, this.parsers, this)) as ParseValueValidator;
+    } else if (typeof options !== "function") {
       throw new Error("options must be a function");
     }
     for (const reserved of RESERVED) {
