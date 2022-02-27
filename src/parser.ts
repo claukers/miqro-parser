@@ -13,8 +13,10 @@ import {
   parseAny,
   parseArray,
   parseBoolean,
+  parseDecodeHTML,
   parseDict,
   parseEmail,
+  parseEncodeHTML,
   parseEnum,
   parseFunction,
   parseMultiple,
@@ -170,6 +172,8 @@ export class Parser implements ParserInterface {
     this.registerParser("url", parseURL);
     this.registerParser("function", parseFunction);
     this.registerParser("email", parseEmail);
+    this.registerParser("encodeHtml", parseEncodeHTML);
+    this.registerParser("decodeHtml", parseDecodeHTML);
     this.registerEnum("ParseOptionsMode", ["remove_extra", "add_extra", "no_extra"]);
     this.registerType("ParseOption", {
       ...PARSE_OPTION_BASE,
