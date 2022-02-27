@@ -135,3 +135,7 @@ const name2 = get({
 
 strictEqual(name2, "name");
 ```
+
+## browser bundle ( not recommended )
+
+Tested with ```webpack's``` vanilla configuration.
