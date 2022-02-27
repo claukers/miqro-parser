@@ -174,6 +174,10 @@ strictEqual(name2, "name");
 - any
 - object
 - array
+  - options
+    - arrayType
+    - arrayMaxLength
+    - arrayMinLength
 - dict
   - options
     - dictType
@@ -225,7 +229,9 @@ parser.registerParser("my-integer", {
 
 ### type custom option
 
-use the ```options``` attribute. for example.
+use the ```options``` attribute. 
+
+#### example
 
 ```typescript
 import {Parser} from "@miqro/parser";
