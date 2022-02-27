@@ -82,7 +82,7 @@ const parsed = parser.parse(value, {
 strictEqual(parsed.attr1, 13);
 ```
 
-## or ( **|** ), forceArray ( **[]!** ) and optional ( **?** )
+## or ( **|** ), array ( **[]** ), forceArray ( **[]!** ) and optional ( **?** )
 
 ```typescript
 import {Parser} from "@miqro/parser";
@@ -221,4 +221,39 @@ parser.registerParser("my-integer", {
   numberMinDecimals: 0,
   numberMaxDecimals: 0
 });
+```
+
+### type custom option
+
+use the ```options``` attribute. for example.
+
+```typescript
+import {Parser} from "@miqro/parser";
+
+const parser = new Parser();
+parser.registerParser("my-type", (args) => {
+  // use args.options
+  // return parsed value
+  return "parsed";
+});
+
+const parsed = parser.parse(..., {
+  value: {
+    type: "my-type",
+    options: {
+      other: "options"
+    }
+  }
+});
+
+/*
+// you can also use the custom options in type aliases.
+parser.registerParser("my-type-alias", {
+  type: "my-type", // any registered type
+  options: {
+      some: "attr"
+  }
+});
+ */
+
 ```

@@ -16,6 +16,7 @@ export type ParseOptionMap = Dict<ParseOptionsBase | ParseOptionTypeWithOutOptio
 
 export interface ParseOptionsBase {
   type: ParseOptionType;
+  options?: any; // for custom options
   dictType?: ParseOptionType;
   regex?: string;
   multipleOptions?: ParseOptionsBase[];

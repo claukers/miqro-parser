@@ -36,6 +36,7 @@ const PARSE_OPTION_BASE: ParseOptionMap = {
     type: "string",
     stringMinLength: 1
   },
+  options: "any?",
   regex: "string?",
   multipleOptions: "ParseOptionsBase[]!?",
   forceArray: "boolean?",
@@ -365,6 +366,7 @@ export class Parser implements ParserInterface {
 
           const value = parseValue({
             name,
+            options: option.options,
             attrName: option.name,
             type: option.type,
             regex: option.regex,
