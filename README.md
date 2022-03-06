@@ -154,11 +154,11 @@ strictEqual(name2, "name");
   - options
     - stringMinLength
     - stringMaxLength
-- decodeHtml
+- decodeHTML
   - options
     - stringMinLength
     - stringMaxLength
-- encodeHtml
+- encodeHTML
   - options
     - stringMinLength
     - stringMaxLength

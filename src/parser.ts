@@ -177,8 +177,8 @@ export class Parser implements ParserInterface {
     this.registerParser("url", parseURL);
     this.registerParser("function", parseFunction);
     this.registerParser("email", parseEmail);
-    this.registerParser("encodeHtml", parseEncodeHTML);
-    this.registerParser("decodeHtml", parseDecodeHTML);
+    this.registerParser("encodeHTML", parseEncodeHTML);
+    this.registerParser("decodeHTML", parseDecodeHTML);
     this.registerEnum("ParseOptionsMode", ["remove_extra", "add_extra", "no_extra"]);
     this.registerType("ParseOption", {
       ...PARSE_OPTION_BASE,
@@ -315,7 +315,7 @@ export class Parser implements ParserInterface {
     name: string = "arg"): any {
     const ret: { [name: string]: any } = {};
     const optionsAsStringFlag = typeof options === "string";
-    let oldName = name;
+    const optionsAsStringAttr = name;
     if (arg === undefined || arg === null || (typeof arg !== "object" && !optionsAsStringFlag)) {
       throw new ParseOptionsError(`invalid ${name}`, name);
     }
@@ -323,13 +323,13 @@ export class Parser implements ParserInterface {
       throw new ParseOptionsError("cannot use options as string and send mode");
     }
     if (optionsAsStringFlag) {
+      name = "";
       options = {
-        [name]: options as string
+        [optionsAsStringAttr]: options as string
       };
       arg = {
-        [name]: arg
+        [optionsAsStringAttr]: arg
       };
-      name = "";
     }
 
     if (!(options instanceof Array)) {
@@ -400,7 +400,7 @@ export class Parser implements ParserInterface {
               `${option.type === "nested" ? ` as defined!` : ""}` +
               `${option.type === "enum" ? ` as defined. valid values [${option.enumValues}]` : ""}` +
               `${option.type === "multiple" ? ` as defined.` : ""}`,
-              `${name}.${option.name}`
+              `${name ? `${name}.` : ""}${option.name}`
             );
           } else if (value !== undefined) {
             ret[option.name] = value;
@@ -414,7 +414,7 @@ export class Parser implements ParserInterface {
       }
     }
     if (optionsAsStringFlag) {
-      return ret[oldName];
+      return ret[optionsAsStringAttr];
     }
     switch (mode) {
       case "no_extra":
