@@ -63,6 +63,7 @@ const PARSE_OPTION_BASE: ParseOptionMap = {
   enumValues: "string[]?",
   parseJSON: "boolean?",
   description: "string?",
+  usage: "string?",
   required: "boolean?",
   defaultValue: "any?"
 };
@@ -386,20 +387,21 @@ export class Parser implements ParserInterface {
             nestedOptions: option.nestedOptions,
             enumValues: option.enumValues,
             parseJSON: option.parseJSON,
+            usage: option.usage,
             arrayMaxLength: option.arrayMaxLength,
             arrayMinLength: option.arrayMinLength,
             forceArray: option.forceArray
           }, this.parsers, this);
           if (value === undefined && typeSplit.length - 1 === i) {
             throw new ParseOptionsError(
-              `${name ? `${name}.` : ""}${option.name} not ${option.type}` +
-              `${option.type === "number" && option.numberMin !== undefined ? `${option.numberMin}:` : ""}${option.type === "number" && option.numberMax !== undefined ? `:${option.numberMax}` : ""}${option.numberMinDecimals !== undefined ? ` min decimals[${option.numberMinDecimals}]` : ""}${option.numberMaxDecimals !== undefined ? ` max decimals[${option.numberMaxDecimals}]` : ""}` +
-              `${option.type === "string" && option.stringMinLength !== undefined ? `${option.stringMinLength}:` : ""}${option.type === "string" && option.stringMaxLength !== undefined ? `:${option.stringMaxLength}` : ""}` +
-              `${option.type === "array" && option.arrayMinLength !== undefined ? `${option.arrayMinLength}:` : ""}${option.type === "array" && option.arrayMaxLength !== undefined ? `:${option.arrayMaxLength}` : ""}` +
-              `${option.type === "array" && option.arrayType ? (option.arrayType !== "enum" ? ` of ${option.arrayType}` : ` of ${option.arrayType} as defined. valid values [${option.enumValues}]`) : ""}` +
-              `${option.type === "nested" ? ` as defined!` : ""}` +
-              `${option.type === "enum" ? ` as defined. valid values [${option.enumValues}]` : ""}` +
-              `${option.type === "multiple" ? ` as defined.` : ""}`,
+              option.usage ? String(option.usage) : `${name ? `${name}.` : ""}${option.name} not ${option.type}` +
+                `${option.type === "number" && option.numberMin !== undefined ? `${option.numberMin}:` : ""}${option.type === "number" && option.numberMax !== undefined ? `:${option.numberMax}` : ""}${option.numberMinDecimals !== undefined ? ` min decimals[${option.numberMinDecimals}]` : ""}${option.numberMaxDecimals !== undefined ? ` max decimals[${option.numberMaxDecimals}]` : ""}` +
+                `${option.type === "string" && option.stringMinLength !== undefined ? `${option.stringMinLength}:` : ""}${option.type === "string" && option.stringMaxLength !== undefined ? `:${option.stringMaxLength}` : ""}` +
+                `${option.type === "array" && option.arrayMinLength !== undefined ? `${option.arrayMinLength}:` : ""}${option.type === "array" && option.arrayMaxLength !== undefined ? `:${option.arrayMaxLength}` : ""}` +
+                `${option.type === "array" && option.arrayType ? (option.arrayType !== "enum" ? ` of ${option.arrayType}` : ` of ${option.arrayType} as defined. valid values [${option.enumValues}]`) : ""}` +
+                `${option.type === "nested" ? ` as defined!` : ""}` +
+                `${option.type === "enum" ? ` as defined. valid values [${option.enumValues}]` : ""}` +
+                `${option.type === "multiple" ? ` as defined.` : ""}`,
               `${name ? `${name}.` : ""}${option.name}`
             );
           } else if (value !== undefined) {

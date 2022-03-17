@@ -145,6 +145,8 @@ strictEqual(name2, "name");
 - regex
   - options
     - regex
+    - stringMinLength
+    - stringMaxLength
 - url
   - options
     - stringMinLength

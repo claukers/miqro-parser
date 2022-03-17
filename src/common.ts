@@ -38,6 +38,7 @@ export interface ParseOptionsBase {
   enumValues?: string[];
   parseJSON?: boolean;
   description?: string;
+  usage?: string;
   required?: boolean;
   defaultValue?: any;
 }
