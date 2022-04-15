@@ -1,8 +1,7 @@
 import {ParserInterface, ParseValueArgs} from "../common";
 
-export function parseArray(args: ParseValueArgs, parser: ParserInterface) {
+export function parseArray(value: any, args: ParseValueArgs, parser: ParserInterface) {
   const {
-    value,
     arrayType,
     name,
     attrName,

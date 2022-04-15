@@ -1,10 +1,10 @@
 import {ParseValueArgs} from "../common";
 
-export function parseNumber(args: ParseValueArgs) {
-  if (!(args.value === null ? false : !isNaN(args.value))) {
+export function parseNumber(value: any, args: ParseValueArgs) {
+  if (!(value === null ? false : !isNaN(value))) {
     return;
   }
-  const parsedValue = parseFloat(args.value);
+  const parsedValue = parseFloat(value);
   if (args.numberMin !== undefined && parsedValue < args.numberMin) {
     return;
   }

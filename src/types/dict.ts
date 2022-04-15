@@ -1,17 +1,17 @@
 import {ParserInterface, ParseValueArgs} from "../common";
 
-export function parseDict(args: ParseValueArgs, parser: ParserInterface) {
-  const isObject = typeof args.value === "object";
+export function parseDict(value: any, args: ParseValueArgs, parser: ParserInterface) {
+  const isObject = typeof value === "object";
   if (!isObject) {
     return;
   }
   if (args.dictType !== undefined) {
-    const keys = Object.keys(args.value);
+    const keys = Object.keys(value);
     const parsed: any = {};
     for (const key of keys) {
       parsed[key] = parser.parse({
         [args.attrName]: {
-          [key]: args.value[key]
+          [key]: value[key]
         }
       }, {
         [args.attrName]: {
@@ -27,6 +27,6 @@ export function parseDict(args: ParseValueArgs, parser: ParserInterface) {
     }
     return parsed;
   } else {
-    return args.value;
+    return value;
   }
 }

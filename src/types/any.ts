@@ -1,5 +1,3 @@
-import {ParseValueArgs, ParseValueValidator} from "../common";
+import {ParseValueValidator} from "../common";
 
-export const parseAny: ParseValueValidator = (args: ParseValueArgs) => {
-  return args.value;
-}
+export const parseAny: ParseValueValidator = (value) => value;

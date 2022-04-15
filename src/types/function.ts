@@ -1,5 +1,5 @@
 import {ParseValueArgs} from "../common";
 
-export function parseFunction(args: ParseValueArgs) {
-  return typeof args.value === "function" ? args.value : undefined;
+export function parseFunction(value: any, args: ParseValueArgs) {
+  return typeof value === "function" ? value : undefined;
 }

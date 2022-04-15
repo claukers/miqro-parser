@@ -50,12 +50,11 @@ export interface ParseOption extends ParseOptionsBase {
 export interface ParseValueArgs extends ParseOptionsBase {
   name: string;
   attrName: string;
-  value: any;
 }
 
 export type ParseValueValidatorResponse<T = any> = T | undefined;
 
-export type ParseValueValidator = (args: ParseValueArgs, parser: ParserInterface) => ParseValueValidatorResponse;
+export type ParseValueValidator = (value: any, args: ParseValueArgs, parser: ParserInterface) => ParseValueValidatorResponse;
 
 export interface ParserInterface {
   parse(

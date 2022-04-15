@@ -8,9 +8,9 @@ const testOptions = {
 it("parser custom happy path", () => {
   const parser = new Parser();
 
-  parser.registerParser("custom1_item", (args, p) => {
+  parser.registerParser("custom1_item", (value, args, p) => {
     return p.parse({
-      [args.attrName]: args.value
+      [args.attrName]: value
     }, {
       [args.attrName]: {
         type: "nested",
@@ -22,9 +22,9 @@ it("parser custom happy path", () => {
       }
     }, "no_extra", args.name)[args.attrName];
   });
-  parser.registerParser("custom1", (args, p) => {
+  parser.registerParser("custom1", (value, args, p) => {
     return p.parse({
-      [args.attrName]: args.value
+      [args.attrName]: value
     }, {
       [args.attrName]: {
         type: "nested",
@@ -41,9 +41,9 @@ it("parser custom happy path", () => {
     }, "no_extra", args.name)[args.attrName];
   });
 
-  parser.registerParser("custom1_list", (args, p) => {
+  parser.registerParser("custom1_list", (value, args, p) => {
     return p.parse({
-      [args.attrName]: args.value
+      [args.attrName]: value
     }, {
       [args.attrName]: {
         type: "array",

@@ -1,14 +1,14 @@
 import {ParseOptionsError} from "../error";
 import {ParserInterface, ParseValueArgs} from "../common";
 
-export function parseMultiple(args: ParseValueArgs, parser: ParserInterface) {
+export function parseMultiple(value: any, args: ParseValueArgs, parser: ParserInterface) {
   if (!args.multipleOptions) {
     throw new ParseOptionsError(`unsupported type ${args.type} without multipleOptions`);
   }
   for (let i = 0; i < args.multipleOptions.length; i++) {
     const basicOption = args.multipleOptions[i];
     try {
-      const aiType = parser.parse({[args.attrName]: args.value}, {
+      const aiType = parser.parse({[args.attrName]: value}, {
         [args.attrName]: {
           ...basicOption,
           forceArray: args.forceArray

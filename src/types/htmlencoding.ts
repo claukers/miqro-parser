@@ -17,8 +17,8 @@ function encodeHTML(str: string): string {
   return buf.join('');
 }
 
-export function parseEncodeHTML(args: ParseValueArgs) {
-  const str = parseString(args);
+export function parseEncodeHTML(value: any, args: ParseValueArgs) {
+  const str = parseString(value, args);
   if (str === undefined) {
     return undefined;
   } else {
@@ -26,8 +26,8 @@ export function parseEncodeHTML(args: ParseValueArgs) {
   }
 }
 
-export function parseDecodeHTML(args: ParseValueArgs) {
-  const str = parseString(args);
+export function parseDecodeHTML(value: any, args: ParseValueArgs) {
+  const str = parseString(value, args);
   if (str === undefined) {
     return undefined;
   } else {

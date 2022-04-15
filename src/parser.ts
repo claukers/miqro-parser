@@ -68,7 +68,7 @@ const PARSE_OPTION_BASE: ParseOptionMap = {
   defaultValue: "any?"
 };
 
-const parseValue = (args: ParseValueArgs, parsers: { [name: string]: ParseValueValidator }, p: Parser): ParseValueValidatorResponse => {
+const parseValue = (value: any, args: ParseValueArgs, parsers: { [name: string]: ParseValueValidator }, p: Parser): ParseValueValidatorResponse => {
   const {
     type,
     forceArray,
@@ -76,7 +76,6 @@ const parseValue = (args: ParseValueArgs, parsers: { [name: string]: ParseValueV
     defaultValue,
     required,
     name,
-    value,
     attrName,
     allowNull
   } = args;
@@ -96,25 +95,25 @@ const parseValue = (args: ParseValueArgs, parsers: { [name: string]: ParseValueV
 
   // prepare args
   if (parseJSON) {
-    if (typeof args.value !== "string") {
+    if (typeof value !== "string") {
       throw new ParseOptionsError(`parseJSON not available to non string value`);
     }
     try {
-      args.value = JSON.parse(args.value);
+      value = JSON.parse(value);
     } catch (e) {
       throw new ParseOptionsError(`value not json!`);
     }
   }
 
-  if (allowNull && args.value === null) {
+  if (allowNull && value === null) {
     return null;
   } else {
-    if (forceArray && !(args.value instanceof Array)) {
-      args.value = [args.value];
+    if (forceArray && !(value instanceof Array)) {
+      value = [value];
     }
   }
   // run parser
-  return parser(args, p);
+  return parser(value, args, p);
 };
 
 const parseOptionMap2ParseOptionList = (map: ParseOptionMap): ParseOption[] => {
@@ -225,19 +224,19 @@ export class Parser implements ParserInterface {
       }
     });
     // aliases need the ParseOptionsBase type registered to work
-    this.registerParser("integer", {
+    this.registerAlias("integer", {
       type: "number",
       numberMinDecimals: 0,
       numberMaxDecimals: 0
     });
-    this.registerParser("string1", {
+    this.registerAlias("string1", {
       type: "string",
       stringMinLength: 1
     });
   }
 
   public registerDict(type: string, dictType: string, noList = false): void {
-    return this.registerParser(type, (args, parser) => parseValue({
+    return this.registerParser(type, (value, args, parser) => parseValue(value, {
       ...args,
       dictType,
       type: "dict",
@@ -245,7 +244,7 @@ export class Parser implements ParserInterface {
   }
 
   public registerEnum(type: string, enumValues: string[], noList = false): void {
-    return this.registerParser(type, (args, parser) => parseValue({
+    return this.registerParser(type, (value, args, parser) => parseValue(value, {
       ...args,
       enumValues,
       type: "enum",
@@ -253,7 +252,7 @@ export class Parser implements ParserInterface {
   }
 
   public registerType(type: string, options: ParseOption[] | ParseOptionMap, mode: ParseOptionsMode = "no_extra", noList = false): void {
-    return this.registerParser(type, (args, parser) => parseValue({
+    return this.registerParser(type, (value, args, parser) => parseValue(value, {
       ...args,
       nestedOptions: {
         options,
@@ -263,24 +262,27 @@ export class Parser implements ParserInterface {
     }, this.parsers, this), noList);
   }
 
-  public registerParser(type: string, options: ParseValueValidator | ParseOptionsBase, noList = false): void {
+  public registerAlias(type: string, options: ParseOptionsBase, noList = false): void {
+    const baseOptions = this.parse(options, "ParseOptionsBase") as ParseOptionsBase;
+    if (options.type === type) {
+      throw new Error("cannot register parser. type cannot be the same as options.type.");
+    }
+    if (typeof options.type !== "string") {
+      throw new Error("cannot register parser. options.type must be a string.");
+    }
+    const parser = ((value, args: ParseValueArgs, parser: ParserInterface): ParseValueValidatorResponse => parseValue(value, {
+      ...args,
+      ...baseOptions
+    }, this.parsers, this)) as ParseValueValidator;
+    return this.registerParser(type, parser, noList);
+  }
+
+  public registerParser(type: string, parser: ParseValueValidator, noList = false): void {
     if (typeof type !== "string") {
       throw new Error("type must be a string");
     }
 
-    if (typeof options === "object") {
-      const baseOptions = this.parse(options, "ParseOptionsBase") as ParseOptionsBase;
-      if (options.type === type) {
-        throw new Error("cannot register parser. type cannot be the same as options.type.");
-      }
-      if (typeof options.type !== "string") {
-        throw new Error("cannot register parser. options.type must be a string.");
-      }
-      options = ((args: ParseValueArgs, parser: ParserInterface): ParseValueValidatorResponse => parseValue({
-        ...args,
-        ...baseOptions
-      }, this.parsers, this)) as ParseValueValidator;
-    } else if (typeof options !== "function") {
+    if (typeof parser !== "function") {
       throw new Error("options must be a function");
     }
     for (const reserved of RESERVED) {
@@ -291,15 +293,15 @@ export class Parser implements ParserInterface {
     if (this.parsers[type]) {
       throw new Error("already registered!");
     }
-    this.parsers[type] = options;
+    this.parsers[type] = parser;
 
     if (!noList) {
-      this.parsers[`${type}[]`] = (args, parser) => parseValue({
+      this.parsers[`${type}[]`] = (value, args, parser) => parseValue(value, {
         ...args,
         type: "array",
         arrayType: type
       }, this.parsers, this);
-      this.parsers[`${type}[]!`] = (args, parser) => parseValue({
+      this.parsers[`${type}[]!`] = (value, args, parser) => parseValue(value, {
         ...args,
         type: "array",
         arrayType: type,
@@ -365,7 +367,7 @@ export class Parser implements ParserInterface {
         }
         try {
 
-          const value = parseValue({
+          const value = parseValue(argValue, {
             name,
             options: option.options,
             attrName: option.name,
@@ -373,7 +375,6 @@ export class Parser implements ParserInterface {
             regex: option.regex,
             required: option.required,
             defaultValue: option.defaultValue,
-            value: argValue,
             dictType: option.dictType,
             numberMaxDecimals: option.numberMaxDecimals,
             numberMinDecimals: option.numberMinDecimals,

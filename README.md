@@ -57,7 +57,7 @@ parser.registerType("CustomType", {
   statusMap: "Dict<CustomStatus>"
 });
 // or as a function
-/*parser.registerParser((args, parser) => {
+/*parser.registerParser((value, args, parser) => {
    return ... // return parsed value or undefined if cannot be parsed
 });*/
 
@@ -222,7 +222,7 @@ to avoid using built-in type options create a type alias.
 import {Parser} from "@miqro/parser";
 
 const parser = new Parser();
-parser.registerParser("my-integer", {
+parser.registerAlias("my-integer", {
   type: "number", // any registered type
   numberMinDecimals: 0,
   numberMaxDecimals: 0
@@ -239,7 +239,7 @@ use the ```options``` attribute.
 import {Parser} from "@miqro/parser";
 
 const parser = new Parser();
-parser.registerParser("my-type", (args) => {
+parser.registerParser("my-type", (value, args) => {
   // use args.options
   // return parsed value
   return "parsed";
@@ -256,7 +256,7 @@ const parsed = parser.parse(..., {
 
 /*
 // you can also use the custom options in type aliases.
-parser.registerParser("my-type-alias", {
+parser.registerAlias("my-type-alias", {
   type: "my-type", // any registered type
   options: {
       some: "attr"

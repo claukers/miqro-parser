@@ -13,8 +13,8 @@ it("get happy path", async () => {
 
 it("get happy path custom parser", () => {
   const parser = new Parser();
-  parser.registerParser("bla", (args, parser) => {
-    return typeof args.value === "string" ? args.value : undefined;
+  parser.registerParser("bla", (value, args, parser) => {
+    return typeof value === "string" ? value : undefined;
   })
   strictEqual(get({
     user: {

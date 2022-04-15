@@ -1,7 +1,7 @@
 import {ParseValueArgs} from "../common";
 
-export function parseBoolean(args: ParseValueArgs) {
-  return args.value === "true" || args.value === true ? true : (args.value === "false" || args.value === false ? false : undefined);
+export function parseBoolean(value: any, args: ParseValueArgs) {
+  return value === "true" || value === true ? true : (value === "false" || value === false ? false : undefined);
 }
 
 
