@@ -1,4 +1,6 @@
 import {
+  ParseOptionsError,
+  PARSE_OPTION_BASE,
   ParseOption,
   ParseOptionMap,
   ParseOptions,
@@ -7,9 +9,8 @@ import {
   ParserInterface,
   ParseValueArgs,
   ParseValueValidator,
-  ParseValueValidatorResponse
-} from "./common";
-import {ParseOptionsError} from "./error";
+  ParseValueValidatorResponse,
+} from "./common.js";
 import {
   parseAny,
   parseArray,
@@ -27,119 +28,9 @@ import {
   parseRegex,
   parseString,
   parseURL
-} from "./types";
+} from "./types/index.js";
 
 const RESERVED = ["|", "!", "?"];
-
-const PARSE_OPTION_BASE: ParseOptionMap = {
-  type: {
-    type: "string",
-    stringMinLength: 1
-  },
-  dictType: {
-    type: "string?",
-    stringMinLength: 1
-  },
-  options: "any?",
-  regex: "string?",
-  multipleOptions: "ParseOptionsBase[]!?",
-  forceArray: "boolean?",
-  allowNull: "boolean?",
-  arrayType: "string?",
-  arrayMinLength: "number?",
-  arrayMaxLength: "number?",
-  numberMaxDecimals: "number?",
-  numberMinDecimals: "number?",
-  numberMin: "number?",
-  numberMax: "number?",
-  stringMaxLength: "number?",
-  stringMinLength: "number?",
-  nestedOptions: {
-    type: "nested?",
-    nestedOptions: {
-      options: {
-        options: "ParseOption[]!|ParseOptionMap",
-        mode: "ParseOptionsMode?"
-      },
-      mode: "no_extra"
-    }
-  },
-  enumValues: "string[]?",
-  parseJSON: "boolean?",
-  description: "string?",
-  usage: "string?",
-  required: "boolean?",
-  defaultValue: "any?"
-};
-
-const parseValue = (value: any, args: ParseValueArgs, parsers: { [name: string]: ParseValueValidator }, p: Parser): ParseValueValidatorResponse => {
-  const {
-    type,
-    forceArray,
-    parseJSON,
-    defaultValue,
-    required,
-    name,
-    attrName,
-    allowNull
-  } = args;
-
-  // check parsers
-  const parser: ParseValueValidator = parsers[type];
-  if (parser === undefined) {
-    throw new ParseOptionsError(`unsupported type ${type}`);
-  }
-  if (value === undefined && (required === true || required === undefined)) {
-    throw new ParseOptionsError(`${name}.${attrName} not defined`, `${name}.${attrName}`);
-  } else if (value === undefined && defaultValue === undefined) {
-    return undefined;
-  } else if (value === undefined && defaultValue !== undefined) {
-    return defaultValue;
-  }
-
-  // prepare args
-  if (parseJSON) {
-    if (typeof value !== "string") {
-      throw new ParseOptionsError(`parseJSON not available to non string value`);
-    }
-    try {
-      value = JSON.parse(value);
-    } catch (e) {
-      throw new ParseOptionsError(`value not json!`);
-    }
-  }
-
-  if (allowNull && value === null) {
-    return null;
-  } else {
-    if (forceArray && !(value instanceof Array)) {
-      value = [value];
-    }
-  }
-  // run parser
-  return parser(value, args, p);
-};
-
-const parseOptionMap2ParseOptionList = (map: ParseOptionMap): ParseOption[] => {
-  if (typeof map !== "object") {
-    throw new Error("options not object")
-  }
-  return Object.keys(map).map(name => {
-    const val = map[name];
-    return typeof val !== "object" ? {
-      name,
-      required: true,
-      type: val
-    } : val.required === undefined ? {
-      ...val,
-      required: true,
-      name
-    } : {
-      ...val,
-      name
-    };
-  });
-}
 
 /**
  * # Parser
@@ -454,3 +345,72 @@ export const parse = (
   mode: ParseOptionsMode = "no_extra",
   name: string = "arg"
 ): any => defaultParser.parse(arg, options, mode, name);
+
+function parseValue(value: any, args: ParseValueArgs, parsers: { [name: string]: ParseValueValidator }, p: ParserInterface): ParseValueValidatorResponse {
+  const {
+    type,
+    forceArray,
+    parseJSON,
+    defaultValue,
+    required,
+    name,
+    attrName,
+    allowNull
+  } = args;
+
+  // check parsers
+  const parser: ParseValueValidator = parsers[type];
+  if (parser === undefined) {
+    throw new ParseOptionsError(`unsupported type ${type}`);
+  }
+  if (value === undefined && (required === true || required === undefined)) {
+    throw new ParseOptionsError(`${name}.${attrName} not defined`, `${name}.${attrName}`);
+  } else if (value === undefined && defaultValue === undefined) {
+    return undefined;
+  } else if (value === undefined && defaultValue !== undefined) {
+    return defaultValue;
+  }
+
+  // prepare args
+  if (parseJSON) {
+    if (typeof value !== "string") {
+      throw new ParseOptionsError(`parseJSON not available to non string value`);
+    }
+    try {
+      value = JSON.parse(value);
+    } catch (e) {
+      throw new ParseOptionsError(`value not json!`);
+    }
+  }
+
+  if (allowNull && value === null) {
+    return null;
+  } else {
+    if (forceArray && !(value instanceof Array)) {
+      value = [value];
+    }
+  }
+  // run parser
+  return parser(value, args, p);
+}
+
+export function parseOptionMap2ParseOptionList(map: ParseOptionMap): ParseOption[] {
+  if (typeof map !== "object") {
+    throw new Error("options not object")
+  }
+  return Object.keys(map).map(name => {
+    const val = map[name];
+    return typeof val !== "object" ? {
+      name,
+      required: true,
+      type: val
+    } : val.required === undefined ? {
+      ...val,
+      required: true,
+      name
+    } : {
+      ...val,
+      name
+    };
+  });
+}

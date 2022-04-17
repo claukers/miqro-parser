@@ -1,5 +1,4 @@
-import {ParseOptionsError} from "../error";
-import {ParseValueArgs} from "../common";
+import {ParseValueArgs, ParseOptionsError} from "../common.js";
 
 export function parseRegex(value: any, args: ParseValueArgs) {
   if (args.regex === undefined || typeof args.regex !== "string") {

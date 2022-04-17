@@ -1,4 +1,4 @@
-import {ParseValueArgs} from "../common";
+import {ParseValueArgs} from "../common.js";
 
 export function parseNumber(value: any, args: ParseValueArgs) {
   if (!(value === null ? false : !isNaN(value))) {

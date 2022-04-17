@@ -1,5 +1,5 @@
-import {parse, Parser} from "./parser";
-import {ParseOptionsBase} from "./common";
+import {parse, Parser} from "./parser.js";
+import {ParseOptionsBase} from "./common.js";
 
 /*
 usage const name = get(obj, "user.info.name", defaultValue, {type: "string"}, parser);

@@ -1,4 +1,4 @@
-import {ParserInterface, ParseValueArgs} from "../common";
+import {ParserInterface, ParseValueArgs} from "../common.js";
 
 export function parseArray(value: any, args: ParseValueArgs, parser: ParserInterface) {
   const {

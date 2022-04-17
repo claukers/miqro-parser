@@ -1,4 +1,4 @@
-import {ParserInterface, ParseValueArgs} from "../common";
+import {ParserInterface, ParseValueArgs} from "../common.js";
 
 export function parseDict(value: any, args: ParseValueArgs, parser: ParserInterface) {
   const isObject = typeof value === "object";

@@ -1,6 +1,6 @@
-import {newURL, NativeURL} from "../helpers";
-import {ParseValueArgs} from "../common";
-import {parseString} from "./string";
+import {newURL, NativeURL} from "./helpers.js";
+import {ParseValueArgs} from "../common.js";
+import {parseString} from "./string.js";
 
 export function parseURL(value: any, args: ParseValueArgs) {
   const isURL = value instanceof NativeURL;

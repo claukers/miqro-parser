@@ -1,6 +1,5 @@
-import {ParseOptionsError} from "../error";
-import {ParserInterface, ParseValueArgs} from "../common";
-import {parseArray} from "./array";
+import {ParserInterface, ParseValueArgs, ParseOptionsError} from "../common.js";
+import {parseArray} from "./array.js";
 
 export function parseEnum(value: any, args: ParseValueArgs, parser: ParserInterface) {
   const enumValues = parseArray(args.enumValues, {

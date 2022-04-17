@@ -1,5 +1,5 @@
-import {ParseValueArgs} from "../common";
-import {parseString} from "./string";
+import {ParseValueArgs} from "../common.js";
+import {parseString} from "./string.js";
 
 const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 

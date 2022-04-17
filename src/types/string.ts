@@ -1,5 +1,5 @@
-import {ParseValueArgs} from "../common";
-import {parseRegex} from "./regex";
+import {ParseValueArgs} from "../common.js";
+import {parseRegex} from "./regex.js";
 
 export function parseString(value: any, args: ParseValueArgs) {
   if (typeof value !== "string") {

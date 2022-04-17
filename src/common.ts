@@ -14,6 +14,47 @@ export type ParseOptionType = "regex" | "nested" | "enum" | "multiple" | ParseOp
 
 export type ParseOptionMap = Dict<ParseOptionsBase | ParseOptionTypeWithOutOptions>;
 
+export const PARSE_OPTION_BASE: ParseOptionMap = {
+  type: {
+    type: "string",
+    stringMinLength: 1
+  },
+  dictType: {
+    type: "string?",
+    stringMinLength: 1
+  },
+  options: "any?",
+  regex: "string?",
+  multipleOptions: "ParseOptionsBase[]!?",
+  forceArray: "boolean?",
+  allowNull: "boolean?",
+  arrayType: "string?",
+  arrayMinLength: "number?",
+  arrayMaxLength: "number?",
+  numberMaxDecimals: "number?",
+  numberMinDecimals: "number?",
+  numberMin: "number?",
+  numberMax: "number?",
+  stringMaxLength: "number?",
+  stringMinLength: "number?",
+  nestedOptions: {
+    type: "nested?",
+    nestedOptions: {
+      options: {
+        options: "ParseOption[]!|ParseOptionMap",
+        mode: "ParseOptionsMode?"
+      },
+      mode: "no_extra"
+    }
+  },
+  enumValues: "string[]?",
+  parseJSON: "boolean?",
+  description: "string?",
+  usage: "string?",
+  required: "boolean?",
+  defaultValue: "any?"
+};
+
 export interface ParseOptionsBase {
   type: ParseOptionType;
   options?: any; // for custom options
@@ -62,4 +103,11 @@ export interface ParserInterface {
     options: ParseOption[] | ParseOptionMap | string,
     mode?: ParseOptionsMode,
     name?: string): any
+}
+
+export class ParseOptionsError extends Error {
+  constructor(message = "BAD REQUEST", public argAttr?: string) {
+    super(message);
+    this.name = "ParseOptionsError";
+  }
 }

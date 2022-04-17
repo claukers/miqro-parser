@@ -1,3 +1,3 @@
-import {ParseValueValidator} from "../common";
+import {ParseValueValidator} from "../common.js";
 
 export const parseAny: ParseValueValidator = (value) => value;

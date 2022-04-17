@@ -1,5 +1,4 @@
-import {ParseOptionsError} from "../error";
-import {ParserInterface, ParseValueArgs} from "../common";
+import {ParserInterface, ParseValueArgs, ParseOptionsError} from "../common.js";
 
 export function parseMultiple(value: any, args: ParseValueArgs, parser: ParserInterface) {
   if (!args.multipleOptions) {

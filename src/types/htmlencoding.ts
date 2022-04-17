@@ -1,5 +1,5 @@
-import {ParseValueArgs} from "../common";
-import {parseString} from "./string";
+import {ParseValueArgs} from "../common.js";
+import {parseString} from "./string.js";
 
 function decodeHTML(str: string) {
   return str.replace(/&#(\d+);/g, function (match, dec) {
