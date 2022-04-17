@@ -15,7 +15,7 @@
   "author": "claukers",
   "license": "ISC",
   "devDependencies": {
-    "@miqro/test": "0.0.12",
+    "@miqro/test": "../test",
     "@types/node": "17.0.23",
     "typescript": "4.6.3"
   },
