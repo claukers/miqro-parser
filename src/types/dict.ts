@@ -9,21 +9,7 @@ export function parseDict(value: any, args: ParseValueArgs, parser: ParserInterf
     const keys = Object.keys(value);
     const parsed: any = {};
     for (const key of keys) {
-      parsed[key] = parser.parse({
-        [args.attrName]: {
-          [key]: value[key]
-        }
-      }, {
-        [args.attrName]: {
-          type: "nested",
-          nestedOptions: {
-            options: {
-              [key]: args.dictType
-            },
-            mode: "no_extra"
-          }
-        }
-      }, "no_extra", args.name)[args.attrName][key];
+      parsed[key] = parser.parse(value[key], args.dictType, "no_extra", key);
     }
     return parsed;
   } else {

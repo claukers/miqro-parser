@@ -36,6 +36,10 @@ const PARSE_OPTION_BASE: ParseOptionMap = {
     type: "string",
     stringMinLength: 1
   },
+  dictType: {
+    type: "string?",
+    stringMinLength: 1
+  },
   options: "any?",
   regex: "string?",
   multipleOptions: "ParseOptionsBase[]!?",
