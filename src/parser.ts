@@ -394,7 +394,7 @@ function parseValue(value: any, args: ParseValueArgs, parsers: { [name: string]:
   return parser(value, args, p);
 }
 
-export function parseOptionMap2ParseOptionList(map: ParseOptionMap): ParseOption[] {
+function parseOptionMap2ParseOptionList(map: ParseOptionMap): ParseOption[] {
   if (typeof map !== "object") {
     throw new Error("options not object")
   }
