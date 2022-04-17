@@ -141,7 +141,7 @@ const parseOptionMap2ParseOptionList = (map: ParseOptionMap): ParseOption[] => {
  * # Parser
  *
  * ```typescript
- *import { Parser } from "@miqro/core";
+ *import { Parser } from "@miqro/parser";
  *const parser = new Parser();
  *
  *const parsedValue = parser.parse("body", req.body, {
@@ -325,19 +325,19 @@ export class Parser implements ParserInterface {
     if (optionsAsStringFlag && mode !== "no_extra") {
       throw new ParseOptionsError("cannot use options as string and send mode");
     }
+
     if (optionsAsStringFlag) {
       name = "";
-      options = {
-        [optionsAsStringAttr]: options as string
-      };
+
+      options = [{name: optionsAsStringAttr, type: options as string}];
+
       arg = {
         [optionsAsStringAttr]: arg
       };
-    }
-
-    if (!(options instanceof Array)) {
+    } else if (!(options instanceof Array)) {
       options = parseOptionMap2ParseOptionList(options as ParseOptionMap);
     }
+
     for (const baseOption of options) {
       if (typeof baseOption.type !== "string") {
         throw new ParseOptionsError(`invalid type ${baseOption.type}`, name);
