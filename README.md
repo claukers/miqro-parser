@@ -1,142 +1,65 @@
 # @miqro/parser
 
-## parse value
+validate and parse objects in node.
+
+```npm install @miqro/parser```
+
+to use in a browser bundle the module with something like webpack.
+
+## Parser
 
 ```typescript
 import {Parser} from "@miqro/parser";
-import {strictEqual} from "assert";
 
 const parser = new Parser();
-const valueNumber = "123";
-const parsed = parser.parse(valueNumber, "number");
-
-strictEqual(typeof parsed, "number");
 ```
 
-## parse object
+### parse
+
+#### object
 
 ```typescript
-import {Parser} from "@miqro/parser";
-import {strictEqual} from "assert";
-
-const parser = new Parser();
-const valueObject = {
+const parsed = parser.parse({
   attr1: "13",
   attr2: ["true", false]
-};
-const parsed = parser.parse(valueObject, {
-  attr1: "number",
+}, {
+  attr1: {
+    type: "number",
+    numberMaxDecimals: 0
+  },
   attr2: "boolean[]"
 });
 
-strictEqual(typeof parsed.attr1, "number");
-
-// to force array use []!
-const parsedForceArray = parser.parse({
-  attr2: true
-}, {
-  attr1: "number?", // optional
-  attr2: "boolean[]!"
-});
-
-strictEqual(parsedForceArray.attr2[0], true);
+console.log(typeof parsed.attr1); // "number"
+console.log(typeof parsed.attr2[0]); // "boolean"
 ```
 
-## custom types
+#### value
 
 ```typescript
-import {Parser} from "@miqro/parser";
-import {strictEqual} from "assert";
-
-const parser = new Parser();
-parser.registerEnum("CustomStatus", ["OK", "NOK"]);
-parser.registerDict("Dict<CustomStatus>", "CustomStatus");
-parser.registerType("CustomType", {
-  custom: "string",
-  status: "CustomStatus",
-  statusMap: "Dict<CustomStatus>"
-});
-// or as a function
-/*parser.registerParser((value, args, parser) => {
-   return ... // return parsed value or undefined if cannot be parsed
-});*/
-
-
-const value = {
-  attr1: "13",
-  attr2: {
-    custom: "custom1",
-    status: "NOK",
-    statusMap: {
-      registered: "OK",
-      emailValidated: "NOK"
-    }
-  }
-};
-
-const parsed = parser.parse(value, {
-  attr1: "number",
-  attr2: "CustomType"
-});
-
-strictEqual(parsed.attr1, 13);
+const parsed = parser.parse("123", "number");
 ```
 
-## or ( **|** ), array ( **[]** ), forceArray ( **[]!** ) and optional ( **?** )
+#### mode
+
+- ```no_extra```: the default mode. it doesn't allow extra attributes. Parser.parse will throw and error when extra attributes are found.
+- ```remove_extra```: removes the extra attributes from parsed result.
+- ```add_extra```: adds the extra attributes into the parsed result.
 
 ```typescript
-import {Parser} from "@miqro/parser";
-import {strictEqual} from "assert";
-
-const parser = new Parser();
 const parsed = parser.parse({
-  forceArray: "123",
-  attr: "123",
-  attr2: "true",
-  attr3: "text"
+  email: "user@server.com",
+  otherData: {
+      attr1: "1"
+  }
 }, {
-  optional: "string?",
-  forceArray: "number[]!?",
-  attr: "boolean|number|string",
-  attr2: "boolean|number|string",
-  attr3: "boolean|number|string",
-});
+    email: "email"
+}, "add_extra");
 
-strictEqual(parsed.attr, 123);
-strictEqual(parsed.attr2, true);
-strictEqual(parsed.attr3, "text");
-strictEqual(parsed.forceArray[0], 123);
+console.log(parsed.otherData.attr1); // "1"
 ```
 
-## get
-
-```typescript
-import {get} from "@miqro/parser";
-import {strictEqual} from "assert";
-
-const obj = {
-  user: {
-    info: null
-  }
-}
-
-const name = get(obj, "user.info.name", "noname");
-
-strictEqual(name, "noname");
-
-// using parse
-const name2 = get({
-  user: {
-    info: {
-      name: "name"
-    }
-  }
-}, "user.info.name", "noname", "string");
-
-strictEqual(name2, "name");
-```
-
-## built-in types
+### built-in parsers
 
 - string
   - options
@@ -195,33 +118,55 @@ strictEqual(name2, "name");
     - nestedOptions
 - string1
 
-### built-in options
+#### built-in parser options
 
-to use the built-in type options use type as ```object``` instead of a string for example.
+to use the built-in parser options use type as ```object``` instead of a ```string```.
 
 ```typescript
-import {Parser} from "@miqro/parser";
-
-const parser = new Parser();
-parser.registerType("CustomType", {
-  // value will use stringMinLength option from built-in string type
-  value: {
+parser.parse(value, {
+  attr1: {
     type: "string",
-    stringMinLength: 3
-  },
-  // other will use the default options os built-in string type
-  other: "string"
+    stringMaxLength: 10
+  }
 });
 ```
 
-### type aliases
+### custom parsers
 
-to avoid using built-in type options create a type alias.
+#### registerParser
 
 ```typescript
-import {Parser} from "@miqro/parser";
+parser.registerParser("my-type", (value, options, parser) => {
+  // return parsed value
+  return "parsed";
+});
+```
 
-const parser = new Parser();
+#### registerType 
+
+```typescript
+parser.registerType("CustomType", {
+  custom: "string",
+  status: "CustomStatus",
+  statusMap: "Dict<CustomStatus>"
+});
+```
+
+#### registerEnum
+
+```typescript
+parser.registerEnum("CustomStatus", ["OK", "NOK"]);
+```
+
+#### registerDict
+
+```typescript
+parser.registerDict("Dict<CustomStatus>", "CustomStatus");
+```
+
+#### registerAlias
+
+```typescript
 parser.registerAlias("my-integer", {
   type: "number", // any registered type
   numberMinDecimals: 0,
@@ -229,39 +174,47 @@ parser.registerAlias("my-integer", {
 });
 ```
 
-### type custom option
-
-use the ```options``` attribute. 
-
-#### example
+### operators or ( **|** ), array ( **[]** ), forceArray ( **[]!** ) and optional ( **?** )
 
 ```typescript
-import {Parser} from "@miqro/parser";
-
-const parser = new Parser();
-parser.registerParser("my-type", (value, args) => {
-  // use args.options
-  // return parsed value
-  return "parsed";
+const parsed = parser.parse({
+  forceArray: "123",
+  attr: "123",
+  attr2: "true",
+  attr3: "text"
+}, {
+  optional: "string?",
+  forceArray: "number[]!?",
+  attr: "boolean|number|string",
+  attr2: "boolean|number|string",
+  attr3: "boolean|number|string",
 });
+```
 
-const parsed = parser.parse(..., {
-  value: {
-    type: "my-type",
-    options: {
-      other: "options"
+## get
+
+```typescript
+import {get} from "@miqro/parser";
+import {strictEqual} from "assert";
+
+const obj = {
+  user: {
+    info: null
+  }
+}
+
+const name = get(obj, "user.info.name", "noname");
+
+strictEqual(name, "noname");
+
+// using parse
+const name2 = get({
+  user: {
+    info: {
+      name: "name"
     }
   }
-});
+}, "user.info.name", "noname", "string");
 
-/*
-// you can also use the custom options in type aliases.
-parser.registerAlias("my-type-alias", {
-  type: "my-type", // any registered type
-  options: {
-      some: "attr"
-  }
-});
- */
-
+strictEqual(name2, "name");
 ```
