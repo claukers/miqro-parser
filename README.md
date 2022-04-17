@@ -40,7 +40,7 @@ console.log(typeof parsed.attr2[0]); // "boolean"
 const parsed = parser.parse("123", "number");
 ```
 
-#### mode
+### parse mode
 
 - ```no_extra```: the default mode. it doesn't allow extra attributes. Parser.parse will throw and error when extra attributes are found.
 - ```remove_extra```: removes the extra attributes from parsed result.
