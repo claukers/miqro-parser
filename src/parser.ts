@@ -90,7 +90,10 @@ export class Parser implements ParserInterface {
       parse: "function"
     }, "add_extra");
     this.registerType("GroupPolicy", {
-      group: "string[]",
+      groups: {
+        type: "array",
+        arrayType: "string|string[]"
+      },
       groupPolicy: {
         type: "enum",
         enumValues: ["at_least_one", "all"]
@@ -182,7 +185,7 @@ export class Parser implements ParserInterface {
     }
     for (const reserved of RESERVED) {
       if (type.indexOf(reserved) !== -1) {
-        throw new Error(`cannot use type name with ${RESERVED.join(",")} in the type name`);
+        throw new Error(`cannot use type name with ${RESERVED.join(",")} in the type name [${type}]`);
       }
     }
     if (this.parsers[type]) {

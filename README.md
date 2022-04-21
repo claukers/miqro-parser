@@ -164,6 +164,12 @@ parser.registerEnum("CustomStatus", ["OK", "NOK"]);
 parser.registerDict("Dict<CustomStatus>", "CustomStatus");
 ```
 
+#### registerArray
+
+```typescript
+parser.registerArray("CustomStatus[][][]", "CustomStatus[][]");
+```
+
 #### registerAlias
 
 ```typescript
@@ -190,6 +196,10 @@ const parsed = parser.parse({
   attr3: "boolean|number|string",
 });
 ```
+
+**Important Notice**
+
+internally array ( **[]** ) and forceArray ( **[]!** ) are aliases, so when calling ```this.registerParser("custom", ...)``` only  ```custom[]``` and ```custom[]!``` will be defined.
 
 ## get
 

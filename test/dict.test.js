@@ -41,4 +41,19 @@ describe("parse dict functional tests", () => {
     strictEqual(parsed.dict.key, "value");
     strictEqual(parsed.dict.key2.some, 1);
   });
+
+  it("string[][] alias test", async () => {
+
+
+    const ret = (parse({arg: [["1", "2"], "3"]}, {
+      arg: {
+        type: "array",
+        arrayType: "string|string[]"
+      }
+    }))["arg"];
+    strictEqual(ret.length, 2);
+    strictEqual(ret[0].length, 2);
+    strictEqual(ret[1], "3");
+    strictEqual(ret[0][1], "2");
+  });
 });
