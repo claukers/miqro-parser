@@ -1,5 +1,6 @@
 const {parse, Parser} = require("../dist");
 const {strictEqual} = require("assert");
+const {it, describe} = require("@miqro/test");
 
 describe("parse dict functional tests", () => {
   it("happy path", async () => {
