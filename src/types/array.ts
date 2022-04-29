@@ -1,38 +1,17 @@
 import {ParserInterface, ParseValueArgs} from "../common.js";
 
 export function parseArray(value: any, args: ParseValueArgs, parser: ParserInterface) {
-  const {
-    arrayType,
-    name,
-    attrName,
-    numberMin,
-    options,
-    numberMax,
-    allowNull,
-    multipleOptions,
-    stringMinLength,
-    numberMaxDecimals,
-    numberMinDecimals,
-    stringMaxLength,
-    nestedOptions,
-    usage,
-    enumValues,
-    //options,
-    regex,
-    arrayMaxLength,
-    arrayMinLength
-  } = args;
   let parsedList: any[] = [];
   if (!(value instanceof Array)) {
     return;
   }
-  if (arrayMaxLength !== undefined && value.length > arrayMaxLength) {
+  if (args.arrayMaxLength !== undefined && value.length > args.arrayMaxLength) {
     return;
   }
-  if (arrayMinLength !== undefined && value.length < arrayMinLength) {
+  if (args.arrayMinLength !== undefined && value.length < args.arrayMinLength) {
     return;
   }
-  if (arrayType === undefined) {
+  if (args.arrayType === undefined) {
     parsedList = parsedList.concat(value);
   } else {
     for (let i = 0; i < value.length; i++) {
@@ -41,25 +20,12 @@ export function parseArray(value: any, args: ParseValueArgs, parser: ParserInter
         [i.toString()]: v
       }, {
         [i.toString()]: {
-          type: arrayType,
-          regex,
+          ...args,
+          parseJSON: false,
           forceArray: false,
-          numberMin,
-          numberMax,
-          usage,
-          options,
-          numberMaxDecimals,
-          numberMinDecimals,
-          allowNull,
-          multipleOptions,
-          stringMinLength,
-          stringMaxLength,
-          nestedOptions,
-          enumValues,
-          arrayMaxLength,
-          arrayMinLength,
+          type: args.arrayType,
         }
-      }, "no_extra", `${name}.${attrName}`);
+      }, "no_extra", `${args.name}.${args.attrName}`);
 
       if (parsed[i] === undefined) {
         return;

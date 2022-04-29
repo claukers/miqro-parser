@@ -1,10 +1,10 @@
 import {
-  ParseOptionsError,
   PARSE_OPTION_BASE,
   ParseOption,
   ParseOptionMap,
   ParseOptions,
   ParseOptionsBase,
+  ParseOptionsError,
   ParseOptionsMode,
   ParserInterface,
   ParseValueArgs,
@@ -54,10 +54,10 @@ const RESERVED = ["|", "!", "?"];
  * ```
  */
 export class Parser implements ParserInterface {
-  protected parsers: { [name: string]: ParseValueValidator };
+  protected parsers: Map<string, ParseValueValidator>;
 
   constructor() {
-    this.parsers = {};
+    this.parsers = new Map<string, ParseValueValidator>();
     this.registerParser("any", parseAny)
     this.registerParser("array", parseArray);
     this.registerParser("dict", parseDict);
@@ -188,23 +188,23 @@ export class Parser implements ParserInterface {
         throw new Error(`cannot use type name with ${RESERVED.join(",")} in the type name [${type}]`);
       }
     }
-    if (this.parsers[type]) {
+    if (this.parsers.has(type)) {
       throw new Error("already registered!");
     }
-    this.parsers[type] = parser;
+    this.parsers.set(type, parser);
 
     if (!noList) {
-      this.parsers[`${type}[]`] = (value, args, parser) => parseValue(value, {
+      this.parsers.set(`${type}[]`, (value, args, parser) => parseValue(value, {
         ...args,
         type: "array",
         arrayType: type
-      }, this.parsers, this);
-      this.parsers[`${type}[]!`] = (value, args, parser) => parseValue(value, {
+      }, this.parsers, this));
+      this.parsers.set(`${type}[]!`, (value, args, parser) => parseValue(value, {
         ...args,
         type: "array",
         arrayType: type,
         forceArray: true
-      }, this.parsers, this);
+      }, this.parsers, this));
     }
   }
 
@@ -214,7 +214,7 @@ export class Parser implements ParserInterface {
     options: ParseOption[] | ParseOptionMap | string,
     mode: ParseOptionsMode = "no_extra",
     name: string = "arg"): any {
-    const ret: { [name: string]: any } = {};
+    const ret: { [name: string]: any } = Object.create(null);
     const optionsAsStringFlag = typeof options === "string";
     const optionsAsStringAttr = name;
     if (arg === undefined || arg === null || (typeof arg !== "object" && !optionsAsStringFlag)) {
@@ -226,12 +226,10 @@ export class Parser implements ParserInterface {
 
     if (optionsAsStringFlag) {
       name = "";
-
       options = [{name: optionsAsStringAttr, type: options as string}];
-
-      arg = {
-        [optionsAsStringAttr]: arg
-      };
+      const oldArg = arg;
+      arg = Object.create(null);
+      arg[optionsAsStringAttr] = oldArg;
     } else if (!(options instanceof Array)) {
       options = parseOptionMap2ParseOptionList(options as ParseOptionMap);
     }
@@ -249,7 +247,7 @@ export class Parser implements ParserInterface {
       // type split type="string|number"
       const typeSplit = baseOption.type.split("|").map(s => s.trim()).filter(s => s);
       for (let i = 0; i < typeSplit.length; i++) {
-        const option = {
+        const option: ParseOption = {
           ...baseOption,
           type: typeSplit[i]
         };
@@ -266,30 +264,9 @@ export class Parser implements ParserInterface {
         try {
 
           const value = parseValue(argValue, {
-            name,
-            options: option.options,
+            ...option,
             attrName: option.name,
-            type: option.type,
-            regex: option.regex,
-            required: option.required,
-            defaultValue: option.defaultValue,
-            dictType: option.dictType,
-            numberMaxDecimals: option.numberMaxDecimals,
-            numberMinDecimals: option.numberMinDecimals,
-            numberMin: option.numberMin,
-            numberMax: option.numberMax,
-            allowNull: option.allowNull,
-            multipleOptions: option.multipleOptions,
-            stringMinLength: option.stringMinLength,
-            stringMaxLength: option.stringMaxLength,
-            arrayType: option.arrayType,
-            nestedOptions: option.nestedOptions,
-            enumValues: option.enumValues,
-            parseJSON: option.parseJSON,
-            usage: option.usage,
-            arrayMaxLength: option.arrayMaxLength,
-            arrayMinLength: option.arrayMinLength,
-            forceArray: option.forceArray
+            name,
           }, this.parsers, this);
           if (value === undefined && typeSplit.length - 1 === i) {
             throw new ParseOptionsError(
@@ -321,18 +298,18 @@ export class Parser implements ParserInterface {
       case "no_extra":
         const argKeys = Object.keys(arg);
         for (const argKey of argKeys) {
-          if (!ret.hasOwnProperty(argKey) && arg[argKey] !== undefined) {
+          if (ret[argKey] === undefined && arg[argKey] !== undefined) {
             throw new ParseOptionsError(`${name}.${argKey} option not valid [${argKey}]`, `${name}.${argKey}`);
           }
         }
-        return ret;
+        return {...ret};
       case "add_extra":
         return {
           ...arg,
           ...ret
         };
       case "remove_extra":
-        return ret;
+        return {...ret};
       default:
         throw new ParseOptionsError(`unsupported mode ${mode}`);
     }
@@ -349,7 +326,7 @@ export const parse = (
   name: string = "arg"
 ): any => defaultParser.parse(arg, options, mode, name);
 
-function parseValue(value: any, args: ParseValueArgs, parsers: { [name: string]: ParseValueValidator }, p: ParserInterface): ParseValueValidatorResponse {
+function parseValue(value: any, args: ParseValueArgs, parsers: Map<string, ParseValueValidator>, p: ParserInterface): ParseValueValidatorResponse {
   const {
     type,
     forceArray,
@@ -362,7 +339,7 @@ function parseValue(value: any, args: ParseValueArgs, parsers: { [name: string]:
   } = args;
 
   // check parsers
-  const parser: ParseValueValidator = parsers[type];
+  const parser: ParseValueValidator | undefined = parsers.get(type);
   if (parser === undefined) {
     throw new ParseOptionsError(`unsupported type ${type}`);
   }
@@ -407,12 +384,30 @@ function parseOptionMap2ParseOptionList(map: ParseOptionMap): ParseOption[] {
       name,
       required: true,
       type: val
-    } : val.required === undefined ? {
-      ...val,
-      required: true,
-      name
     } : {
-      ...val,
+      type: val.type,
+      regex: val.regex,
+      options: val.options,
+      arrayType: val.arrayType,
+      nestedOptions: val.nestedOptions,
+      enumValues: val.enumValues,
+      parseJSON: val.parseJSON,
+      usage: val.usage,
+      arrayMaxLength: val.arrayMaxLength,
+      arrayMinLength: val.arrayMinLength,
+      forceArray: val.forceArray,
+      defaultValue: val.defaultValue,
+      dictType: val.dictType,
+      numberMaxDecimals: val.numberMaxDecimals,
+      numberMinDecimals: val.numberMinDecimals,
+      numberMin: val.numberMin,
+      numberMax: val.numberMax,
+      allowNull: val.allowNull,
+      multipleOptions: val.multipleOptions,
+      stringMinLength: val.stringMinLength,
+      stringMaxLength: val.stringMaxLength,
+      description: val.description,
+      required: !!val.required,
       name
     };
   });
