@@ -385,29 +385,7 @@ function parseOptionMap2ParseOptionList(map: ParseOptionMap): ParseOption[] {
       required: true,
       type: val
     } : {
-      type: val.type,
-      regex: val.regex,
-      options: val.options,
-      arrayType: val.arrayType,
-      nestedOptions: val.nestedOptions,
-      enumValues: val.enumValues,
-      parseJSON: val.parseJSON,
-      usage: val.usage,
-      arrayMaxLength: val.arrayMaxLength,
-      arrayMinLength: val.arrayMinLength,
-      forceArray: val.forceArray,
-      defaultValue: val.defaultValue,
-      dictType: val.dictType,
-      numberMaxDecimals: val.numberMaxDecimals,
-      numberMinDecimals: val.numberMinDecimals,
-      numberMin: val.numberMin,
-      numberMax: val.numberMax,
-      allowNull: val.allowNull,
-      multipleOptions: val.multipleOptions,
-      stringMinLength: val.stringMinLength,
-      stringMaxLength: val.stringMaxLength,
-      description: val.description,
-      required: !!val.required,
+      ...val,
       name
     };
   });
