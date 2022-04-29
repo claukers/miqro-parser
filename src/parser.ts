@@ -235,6 +235,9 @@ export class Parser implements ParserInterface {
     }
 
     for (const baseOption of options) {
+      if (baseOption.name === "__proto__" || baseOption.name === "__prototype__") {
+        throw new ParseOptionsError(`invalid name ${baseOption.name}`, name);
+      }
       if (typeof baseOption.type !== "string") {
         throw new ParseOptionsError(`invalid type ${baseOption.type}`, name);
       }

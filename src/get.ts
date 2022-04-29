@@ -22,6 +22,9 @@ export const get = (obj: any, attrPath: string, defaultValue?: any, option?: Par
     throw new Error(`attrPath must be typeof string`);
   }
   const path = attrPath.split(".").reverse();
+  if (path.filter(p => p === "__prototype__" || p === "__proto__").length > 0) {
+    throw new Error(`invalid attrPath`);
+  }
   let value = obj;
   while (path.length > 0) {
     const p = path.pop() as string;
