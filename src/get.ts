@@ -25,7 +25,7 @@ export const get = (obj: any, attrPath: string, defaultValue?: any, option?: Par
   let value = obj;
   while (path.length > 0) {
     const p = path.pop() as string;
-    if (value[p] === undefined) {
+    if (!value.hasOwnProperty(p)) {
       return defaultValue !== undefined ? defaultValue : undefined;
     }
     value = value[p];
