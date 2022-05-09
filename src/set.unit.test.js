@@ -5,7 +5,7 @@ const {distPath} = require("./setup-test.js");
 
 const testFilePath = resolve(distPath, "set.js");
 
-describe("template.util.set unit tests", () => {
+describe("template.util.set func tests", () => {
   it("happy path nested with {}", async () => {
     const {set} = requireMock(testFilePath, {}, distPath);
     const obj ={};
@@ -17,6 +17,15 @@ describe("template.util.set unit tests", () => {
     const {set} = requireMock(testFilePath, {}, distPath);
     const obj ={list:["item1"]};
     const ret = set(obj, "list.1", "item2");
+    strictEqual(ret, obj);
+    strictEqual(obj.list.length, 2);
+    strictEqual(obj.list[0], "item1");
+    strictEqual(obj.list[1], "item2");
+  });
+  it("happy path nested with {list:['item1']} with path as string[]", async () => {
+    const {set} = requireMock(testFilePath, {}, distPath);
+    const obj ={list:["item1"]};
+    const ret = set(obj, ["list", "1"], "item2");
     strictEqual(ret, obj);
     strictEqual(obj.list.length, 2);
     strictEqual(obj.list[0], "item1");

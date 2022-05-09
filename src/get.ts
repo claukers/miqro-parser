@@ -5,7 +5,7 @@ import {ParseOptionsBase} from "./common.js";
 usage const name = get(obj, "user.info.name", defaultValue, {type: "string"}, parser);
 */
 /* eslint-disable  @typescript-eslint/explicit-module-boundary-types */
-export const get = (obj: any, attrPath: string, defaultValue?: any, option?: ParseOptionsBase | string, parser?: Parser): any | undefined => {
+export const get = (obj: any, attrPath: string | string[], defaultValue?: any, option?: ParseOptionsBase | string, parser?: Parser): any | undefined => {
   if (typeof option === "string") {
     option = {
       type: option
@@ -18,10 +18,10 @@ export const get = (obj: any, attrPath: string, defaultValue?: any, option?: Par
   if (!obj || typeof obj !== "object") {
     return defaultValue !== undefined ? defaultValue : undefined
   }
-  if (typeof attrPath !== "string") {
-    throw new Error(`attrPath must be typeof string`);
+  if (typeof attrPath !== "string" && !(attrPath instanceof Array)) {
+    throw new Error(`attrPath must be typeof string or string[]`);
   }
-  const path = attrPath.split(".").reverse();
+  const path = (attrPath instanceof Array ? attrPath : attrPath.split(".")).reverse();
   if (path.filter(p => p === "__prototype__" || p === "__proto__").length > 0) {
     throw new Error(`invalid attrPath`);
   }
@@ -36,5 +36,5 @@ export const get = (obj: any, attrPath: string, defaultValue?: any, option?: Par
   if (!option) {
     return value;
   }
-  return (parser ? parser : {parse}).parse({value}, {value: option}, "no_extra", attrPath).value;
+  return (parser ? parser : {parse}).parse({value}, {value: option}, "no_extra", (attrPath instanceof Array ? attrPath.join(".") : attrPath)).value;
 }

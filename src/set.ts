@@ -1,11 +1,11 @@
-export function set<S>(obj: S, attrPath: string, value: any): S {
+export function set<S>(obj: S, attrPath: string | string[], value: any): S {
   if (!obj || typeof obj !== "object") {
     throw new Error(`obj must be and object`);
   }
-  if (typeof attrPath !== "string") {
-    throw new Error(`attrPath must be typeof string`);
+  if (typeof attrPath !== "string" && !(attrPath instanceof Array)) {
+    throw new Error(`attrPath must be typeof string or string[]`);
   }
-  const path = attrPath.split(".").reverse();
+  const path = ((attrPath instanceof Array) ? attrPath : attrPath.split(".")).reverse();
   if (path.filter(p => p === "__prototype__" || p === "__proto__").length > 0) {
     throw new Error(`invalid attrPath`);
   }
