@@ -14,7 +14,7 @@ export const get = (obj: any, attrPath: string | string[], defaultValue?: any, o
   if (defaultValue && option && option.defaultValue) {
     throw new Error(`cannot send defaultValue and options.defaultValue`);
   }
-  defaultValue = defaultValue ? defaultValue : (option ? option.defaultValue : undefined);
+  defaultValue = defaultValue !== undefined ? defaultValue : (option ? option.defaultValue : undefined);
   if (!obj || typeof obj !== "object") {
     return defaultValue !== undefined ? defaultValue : undefined
   }
