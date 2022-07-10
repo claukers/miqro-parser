@@ -1,3 +1,3 @@
 const {resolve} = require("path");
 
-module.exports.distPath = resolve(__dirname, "..", "dist");
+module.exports.distPath = resolve(__dirname, "..", "dist", "cjs");

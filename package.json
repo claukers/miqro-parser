@@ -2,12 +2,13 @@
   "name": "@miqro/parser",
   "version": "0.1.4",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
   "scripts": {
     "prepare": "npm run build",
     "prebuild": "rm -Rf dist/;",
-    "build": "tsc",
+    "build": "tsc && tsc -p tsconfig-esm.json",
+    "postbuild": "deno bundle dist/esm/index.js dist/bundle.esm.js",
     "pretest": "npm run build",
     "test": "LOG_LEVEL=debug NODE_ENV=test npx miqro-test -r src/ test/*.test.js -n ",
     "test:unit": "LOG_LEVEL=debug NODE_ENV=test npx miqro-test -r src/ -n ",
@@ -16,7 +17,7 @@
   "author": "claukers",
   "license": "ISC",
   "devDependencies": {
-    "@miqro/test": "0.2.1",
+    "@miqro/test": "0.2.3",
     "typescript": "4.6.4"
   },
   "engines": {

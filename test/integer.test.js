@@ -1,4 +1,4 @@
-const {parse} = require("../dist");
+const {parse} = require("../dist/cjs");
 const {strictEqual} = require("assert");
 
 describe("integer functional tests", () => {

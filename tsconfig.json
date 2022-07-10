@@ -9,7 +9,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2021",
-    "outDir": "./dist/",
+    "outDir": "./dist/cjs",
     "removeComments": false,
     "noImplicitAny": true,
     "sourceMap": true,

@@ -1,4 +1,4 @@
-const {Parser} = require("../dist");
+const {Parser} = require("../dist/cjs");
 const {strictEqual} = require("assert");
 
 

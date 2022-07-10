@@ -1,6 +1,6 @@
 const {strictEqual} = require("assert");
 const {URL} = require("url");
-const {Parser, parse} = require("../dist");
+const {Parser, parse} = require("../dist/cjs");
 
 describe("parse functional tests", () => {
   it('parse no_extra test', async () => {

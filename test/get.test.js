@@ -1,5 +1,5 @@
 const {strictEqual} = require("assert");
-const {Parser, get} = require("../dist");
+const {Parser, get} = require("../dist/cjs");
 
 describe("get functional tests", () => {
   it("get happy path", async () => {

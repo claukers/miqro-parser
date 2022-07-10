@@ -1,4 +1,4 @@
-const {parse, Parser} = require("../dist");
+const {parse, Parser} = require("../dist/cjs");
 const {strictEqual} = require("assert");
 const {it, describe} = require("@miqro/test");
 
